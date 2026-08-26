@@ -645,7 +645,7 @@ addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passi
 
 // contact form -> supabase edge function -> sendgrid
 // TODO: switch slug to wm-events-contact once that function is deployed
-//       (identical, but stamps the email 'WM Events' instead of 'Jack Morton')
+//       (identical, but stamps the notification email with this client's name)
 const qf=document.getElementById('quoteForm');
 if(qf){
   const st=document.getElementById('cfStatus'),btn=qf.querySelector('.cf-submit');
