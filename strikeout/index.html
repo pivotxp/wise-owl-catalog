@@ -161,11 +161,14 @@
   <script src="js/moderation.js"></script>
   <script src="js/app.js"></script>
 <script>
-  /* When framed in the catalog, the wall opens in its own tab */
+  /* When framed in the catalog, the wall opens in its own tab and the
+     concept-build footer stays out of the phone viewport */
   if (window.self !== window.top) {
     document.querySelectorAll('a[href="wall.html"]').forEach(function (a) {
       a.target = '_blank'; a.rel = 'noopener';
     });
+    var pf = document.querySelector('.poc-footer');
+    if (pf) pf.style.display = 'none';
   }
 </script>
 </body>
