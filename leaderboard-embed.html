@@ -40,8 +40,8 @@ body{background:#0C2412;display:flex;justify-content:center;padding:6px 0 0;font
 /* ---------- leaderboard screen (faithful to the booth build) ---------- */
 .screen{position:absolute;inset:0;color:#fff;
   background:#333 url('assets/ntt/leaderboard_bg.png') center/cover no-repeat}
-#leaderboard-container{position:absolute;top:36%;left:0;right:0;bottom:4%;
-  display:flex;flex-direction:column;justify-content:flex-start;gap:1.55cqh;align-items:center}
+#leaderboard-container{position:absolute;top:36%;left:0;right:0;bottom:5%;
+  display:flex;flex-direction:column;justify-content:space-evenly;align-items:center}
 .entry{display:flex;align-items:baseline;width:88cqw;font-family:'Ka1',monospace;font-size:3.55cqw;color:#fff;
   text-shadow:2px 2px 0 rgba(0,0,0,.6);transition:filter .3s}
 .entry .rank{width:12cqw;flex:none;text-align:right}
@@ -101,7 +101,9 @@ body{background:#0C2412;display:flex;justify-content:center;padding:6px 0 0;font
 /* ---- identical arcade typewriter mechanic to the booth build ---- */
 const N=10, TYPE_SPEED_MS=40;
 const container=document.getElementById('leaderboard-container');
-for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='entry';d.id='entry'+i;container.appendChild(d)}
+for(let i=1;i<=N;i++){const d=document.createElement('div');d.className='entry';d.id='entry'+i;
+  d.innerHTML='<span class="rank">'+i+'.</span> <span class="name"></span> <span class="score"></span>';
+  container.appendChild(d)}
 const displayed=Array(N).fill(null), typingTokens=Array(N).fill(0);
 
 function typeRow(entryDiv,idx,rank,name,score,fresh){
