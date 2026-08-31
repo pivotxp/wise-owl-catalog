@@ -4,52 +4,67 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Full-resolution photos, videos and renders behind the Pivot × WM Events experience catalog — five direct-download packs.">
 <title>Asset Kit · Pivot × WM Events</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&amp;display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%2301A94F' stroke-width='10'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:Gyst;src:url(assets/fonts/Gyst-Bold.otf) format('opentype');font-weight:700;font-display:swap}
 @font-face{font-family:Gyst;src:url(assets/fonts/Gyst-Medium.otf) format('opentype');font-weight:500;font-display:swap}
 @font-face{font-family:Gyst;src:url(assets/fonts/Gyst-Light.otf) format('opentype');font-weight:300;font-display:swap}
 :root{
-  --bg:#0C2412; --surface:#143019; --raise:#1D4122; --line:rgba(1,169,79,.20);
-  --ink:#FFFEF7; --muted:#AEC6B4; --dim:#8AA791;
-  --mint:#01A94F; --mint-deep:#016531; --mint-ink:#06210F;--mint-lt:#5FDD9A;--gold:#CFB888;
-  --disp:"Gyst",Georgia,serif; --body:"Montserrat",system-ui,sans-serif; --mono:"Montserrat",system-ui,sans-serif;
+  --disp:"Gyst",Georgia,serif;
+  --body:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mint:#01A94F; --mint-hi:#12C76B; --mint-deep:#016531; --mint-ink:#06210F;
+  --ease:cubic-bezier(.16,1,.3,1); --ease-soft:cubic-bezier(.4,0,.2,1);
 }
+/* same two grounds as the catalog: the bar stays dark because the PivotXP logo is
+   light-toned and would disappear on the light one */
+.band-light{--bg:#F4F6F3;--surface:#FFFFFF;--raise:#E9EDE7;--line:rgba(12,36,18,.13);
+  --ink:#0C2412;--muted:#4B5C51;--dim:#55665B;--accent:#016531;
+  background:var(--bg);color:var(--ink)}
+.band-dark{--bg:#0C2412;--surface:#143019;--raise:#1D4122;--line:rgba(1,169,79,.20);
+  --ink:#FFFEF7;--muted:#AEC6B4;--dim:#8AA791;--accent:#01A94F;
+  background:var(--bg);color:var(--ink)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:var(--mint);text-decoration:none}
+body{font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
 a:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 .top{display:flex;align-items:center;justify-content:space-between;padding:1.1rem clamp(1.2rem,6vw,5rem);border-bottom:1px solid var(--line)}
 .top img{height:22px;width:auto;display:block}
-.top a.back{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
-.top a.back:hover{color:var(--mint)}
-main{max-width:900px;margin:0 auto;padding:clamp(2.5rem,6vw,5rem) clamp(1.2rem,6vw,3rem)}
-.eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mint-lt)}
-h1{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.05;margin:.9rem 0 1rem}
-.lede{color:var(--muted);max-width:60ch;margin-bottom:2.5rem}
-.packs{display:grid;gap:.9rem}
-.pack{display:flex;align-items:center;gap:1.4rem;border:1px solid var(--line);border-radius:8px;padding:1.3rem 1.5rem;
-  background:linear-gradient(180deg,var(--surface),transparent);transition:border-color .2s;color:var(--ink)}
-.pack:hover{border-color:rgba(1,169,79,.45)}
-.pack .num{font-family:var(--mono);font-size:.75rem;color:var(--mint);letter-spacing:.15em;flex:none}
+.top a.back{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s var(--ease-soft)}
+.top a.back:hover{color:var(--ink)}
+main{max-width:920px;margin:0 auto;padding:clamp(3rem,7vw,5.5rem) clamp(1.2rem,6vw,3rem) clamp(4rem,8vw,6rem)}
+.eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(2rem,5vw,3.4rem);line-height:1.02;letter-spacing:-.015em;margin:1rem 0 1.1rem}
+.lede{color:var(--muted);max-width:58ch;margin-bottom:2.8rem;font-size:1.06rem}
+.packs{display:grid;gap:.75rem}
+.pack{display:flex;align-items:center;gap:1.4rem;border:1px solid var(--line);border-radius:8px;
+  padding:1.3rem 1.5rem;background:var(--surface);color:var(--ink);
+  transition:transform .5s var(--ease),border-color .35s var(--ease-soft),box-shadow .35s var(--ease-soft)}
+.pack:hover{transform:translateY(-3px);border-color:rgba(1,169,79,.42);box-shadow:0 14px 30px -20px rgba(12,36,18,.45)}
+.pack .num{font-family:var(--mono);font-weight:600;font-size:.72rem;color:var(--accent);letter-spacing:.15em;flex:none}
 .pack .info{flex:1;min-width:0}
-.pack h2{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1.05rem}
+.pack h2{font-family:var(--body);font-weight:600;text-transform:uppercase;font-size:.88rem;letter-spacing:.09em;margin-bottom:.3rem}
+.pack .num,.pack .dl{font-variant-numeric:tabular-nums lining-nums}
 .pack p{color:var(--muted);font-size:.88rem}
-.pack .dl{flex:none;display:flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mint-ink);
-  background:var(--mint);border-radius:4px;padding:.6rem .95rem;white-space:nowrap}
-.pack:hover .dl{background:#12C76B}
+.pack .dl{flex:none;display:flex;align-items:center;gap:.55rem;font-family:var(--mono);font-weight:500;font-size:.7rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--mint-ink);
+  background:var(--mint);border-radius:4px;padding:.6rem .95rem;white-space:nowrap;transition:background .3s var(--ease-soft)}
+.pack:hover .dl{background:var(--mint-hi)}
 .pack .dl svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.fine{margin-top:2.2rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:2}
+.fine{margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:2}
 @media(max-width:640px){.pack{flex-wrap:wrap}.pack .dl{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.pack:hover{transform:none}}
 </style>
 </head>
-<body>
+<body class="band-light">
 
-<div class="top">
+<div class="top band-dark">
   <a href="index.html" style="display:flex;align-items:center;gap:.7rem"><img src="assets/img/pivot-logo.png" alt="PivotXP" width="142" height="34"><span style="font-family:var(--mono);font-size:.8rem;color:var(--dim)">×</span><img src="assets/img/wmevents-mark.svg" alt="WM Events" style="height:12px;width:auto;opacity:.92"></a>
   <a class="back" href="index.html#assets">← Back to the catalog</a>
 </div>
@@ -87,7 +102,7 @@ h1{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:cl
     </a>
   </div>
 
-  <p class="fine"><a href="Pivot-x-WM-Events-Experience-Catalog.pdf?v=4" download>Download the PDF edition</a>&nbsp;·&nbsp;Need a specific format, wrap mock-up, or client-branded comp?&nbsp;·&nbsp;<a href="mailto:tommy@pivotxp.com?subject=Jack%20Morton%20%C3%97%20Pivot%20%E2%80%94%20Asset%20request">tommy@pivotxp.com</a></p>
+  <p class="fine"><a href="Pivot-x-WM-Events-Experience-Catalog.pdf?v=5" download>Download the PDF edition</a>&nbsp;·&nbsp;Need a specific format, wrap mock-up, or client-branded comp?&nbsp;·&nbsp;<a href="mailto:tommy@pivotxp.com?subject=WM%20Events%20%C3%97%20Pivot%20%E2%80%94%20Asset%20request">tommy@pivotxp.com</a></p>
 </main>
 
 </body>

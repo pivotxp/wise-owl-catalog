@@ -252,3 +252,7 @@
 }
 
 .poc-tag:hover { color: var(--blue-bright); border-color: var(--blue-bright); }
+
+/* embedded in the catalog: the surrounding page already captions the unit, and at
+   that scale the fixed tag overlaps the bottom banner copy */
+.embedded .poc-tag { display: none; }

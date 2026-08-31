@@ -8,13 +8,24 @@
 <meta name="description" content="PivotXP experiential product catalog, prepared for WM Events.">
 <meta property="og:title" content="Pivot × WM Events — The Experience Catalog">
 <meta property="og:description" content="Capture systems, gamification, AI enhancements, and physical takeaways — with three live demos you can drive in the browser.">
-<meta property="og:image" content="https://pivotxp.github.io/wm-events-catalog/assets/img/og-cover.jpg">
-<meta property="og:url" content="https://pivotxp.github.io/wm-events-catalog/">
+<!-- og:image must be absolute for scrapers. It points at the copy that actually holds
+     the current card; the original repo still has the old one. Update this single line
+     if this build is merged back to pivotxp/wm-events-catalog.
+     Regenerate the card itself with: node tools/make-og.mjs -->
+<meta property="og:image" content="https://kpscriptz.github.io/wm-events-catalog-v2/assets/img/og-cover.jpg?v=5">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Pivot × WM Events — The Experience Catalog">
+<!-- no og:url on purpose: scrapers fall back to the URL actually shared, so the
+     preview card can never send someone to a different build than the link. -->
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0C2412">
+<meta name="color-scheme" content="dark">
+<link rel="preload" as="image" href="assets/img/hero-poster.webp" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&amp;display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%2301A94F' stroke-width='10'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:Gyst;src:url(assets/fonts/Gyst-Bold.otf) format('opentype');font-weight:700;font-display:swap}
@@ -24,19 +35,72 @@
   --bg:#0C2412; --surface:#143019; --raise:#1D4122; --line:rgba(1,169,79,.20);
   --ink:#FFFEF7; --muted:#AEC6B4; --dim:#8AA791;
   --mint:#01A94F; --mint-deep:#016531; --mint-ink:#06210F;--mint-lt:#5FDD9A;--gold:#CFB888;
-  --disp:"Gyst",Georgia,serif; --body:"Montserrat",system-ui,sans-serif; --mono:"Montserrat",system-ui,sans-serif;
+  --mint-hi:#12C76B;
+  /* --mint fills (buttons, rules, glows) and --accent colours text. They differ on
+     light bands: #01A94F on white is only 3.09:1 and fails AA for body text, so the
+     accent darkens while the fill stays vivid. */
+  --accent:#01A94F; --err:#FF7A7A;
+  --shadow-art:drop-shadow(0 30px 40px rgba(0,0,0,.5));
+  --disp:"Gyst",Georgia,serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; --mono:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --nav-h:66px;
+  /* one motion vocabulary for the whole page: a long, decelerating curve that
+     settles rather than stops, and a shorter one for direct interactions */
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.4,0,.2,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* Anchor jumps used to bury the section heading under the fixed nav.
+   scroll-padding clears the nav; the negative scroll-margin on <section> cancels the
+   section's own decorative top padding, so a heading lands just below the bar instead
+   of a screenful of empty space. Both track --nav-h, which grows when the nav wraps. */
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + .5rem)}
+section{scroll-margin-top:calc(-1 * clamp(4.5rem,10vw,9rem))}
+@media(max-width:900px){:root{--nav-h:104px}}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
 img,video{max-width:100%;display:block}
-a{color:var(--mint);text-decoration:none}
-a:focus-visible,button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
+a{color:var(--accent);text-decoration:none}
+a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
 ::selection{background:var(--mint);color:var(--mint-ink)}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--mint);color:var(--mint-ink);
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:.8rem 1.2rem;border-radius:0 0 4px 0}
+.skip:focus{left:0}
+
+/* ---------- light / dark bands ----------
+   The page alternates grounds instead of committing to one. Almost every component
+   already reads from tokens, so a band only has to redefine the token set and the
+   cards, rules, pills and forms inside it follow. Colour comes from the artwork —
+   the chrome stays close to monochrome. */
+.band-light{
+  --bg:#F4F6F3; --surface:#FFFFFF; --raise:#E9EDE7;
+  --line:rgba(12,36,18,.13);
+  /* --dim carries 10-12px uppercase labels (.kicker, .seen, stat captions), so it
+     has to clear 4.5:1 at that size, not just look grey enough. #6A7B70 measured
+     4.13:1 here; this is 5.6:1. */
+  --ink:#0C2412; --muted:#4B5C51; --dim:#55665B;
+  --accent:#016531;            /* 7.1:1 on this ground */
+  --err:#A3231B;
+  --mint-lt:#016531;
+  --shadow-art:drop-shadow(0 24px 34px rgba(12,36,18,.20));
+  background:var(--bg);color:var(--ink)
+}
+.band-dark{
+  --bg:#0C2412; --surface:#143019; --raise:#1D4122;
+  --line:rgba(1,169,79,.20);
+  --ink:#FFFEF7; --muted:#AEC6B4; --dim:#8AA791;
+  --accent:#01A94F; --mint-lt:#5FDD9A; --err:#FF7A7A;
+  --shadow-art:drop-shadow(0 30px 40px rgba(0,0,0,.5));
+  background:var(--bg);color:var(--ink)
+}
+/* device bezels and the media caption scrim sit over artwork, so they stay dark on
+   both grounds and are deliberately not tokenised */
 
 /* ---------- type ---------- */
 h1,h2,h3{font-family:var(--disp);text-wrap:balance}
-.eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mint-lt)}
+/* lining, equal-width figures so the section numerals, stat values and unit codes
+   sit on a consistent vertical rhythm instead of jittering per glyph */
+.sec-head .num,.cred-stats b,.pg-stats .s b,.ib-flow .step i,.kicker,.cta-band a,
+.specs span,.cred-stats i{font-variant-numeric:tabular-nums lining-nums}
+.eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
 .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
 
 /* ---------- nav ---------- */
@@ -47,10 +111,17 @@ h1,h2,h3{font-family:var(--disp);text-wrap:balance}
 .brand .bx{font-family:var(--mono);font-size:.85rem;color:var(--dim)}
 .brand img.jm{height:20px;width:auto;opacity:.92}
 .nav-links{display:flex;gap:1.4rem;margin-left:auto;align-items:center}
-.nav-links a{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+/* nowrap globally: a two-word label breaking onto a second line silently grows the
+   bar past --nav-h, which is what every anchor offset is measured against */
+.nav-links a{position:relative;white-space:nowrap;font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
 .nav-links a:hover{color:var(--ink)}
+.nav-links a:not(.btn-kit)::after{content:"";position:absolute;left:0;right:0;bottom:-.45rem;height:1px;background:var(--mint);
+  transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.nav-links a.active{color:var(--ink)}
+.nav-links a.active::after{transform:scaleX(1)}
+@media(prefers-reduced-motion:reduce){.nav-links a:not(.btn-kit)::after{transition:none}}
 .btn-kit{background:var(--mint);color:var(--mint-ink)!important;padding:.55rem 1rem;border-radius:3px;font-weight:500}
-.btn-kit:hover{background:#12C76B;color:var(--mint-ink)!important}
+.btn-kit:hover{background:var(--mint-hi);color:var(--mint-ink)!important}
 @media(max-width:900px){
   .nav{flex-wrap:wrap;row-gap:.4rem;padding-bottom:.6rem}
   .nav-links{order:3;width:100%;margin-left:0;overflow-x:auto;scrollbar-width:none;gap:1.1rem;padding-bottom:.2rem}
@@ -60,39 +131,63 @@ h1,h2,h3{font-family:var(--disp);text-wrap:balance}
 }
 
 /* ---------- cover ---------- */
-.cover{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:clamp(5rem,10vh,8rem) clamp(1.2rem,6vw,5rem) 4rem;position:relative;overflow:hidden;background:
+/* centred stack: the left-aligned cover left roughly half the viewport empty on
+   desktop, and a centred type stack over full-width artwork is the stronger open */
+.cover{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:clamp(5rem,10vh,8rem) clamp(1.2rem,6vw,5rem) 5rem;position:relative;overflow:hidden;background:
   radial-gradient(1200px 600px at 85% -10%,rgba(1,169,79,.10),transparent 60%),
   radial-gradient(900px 500px at -10% 110%,rgba(1,169,79,.06),transparent 60%),
   var(--bg)}
-.cover::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(174,198,180,.10) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(700px 500px at 80% 20%,#000 20%,transparent 75%);pointer-events:none}
+/* Full-bleed opening frame. The type-only cover read as a document title page;
+   a real activation behind it — the build, the live board, a guest mid-throw —
+   says what Pivot does before a word is read. */
+.cover-media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.cover-media img,.cover-media video{width:100%;height:100%;object-fit:cover;object-position:50% 42%;
+  transform:scale(1.06) translateY(calc(var(--drift,0) * .5));will-change:transform;
+  /* the poster is the video's own first frame, so there is no flash when it starts */
+  background:var(--bg)}
+/* Scrim carries the contrast, so the headline never depends on what the photo is
+   doing underneath it. Measured against the rendered pixels, not eyeballed. */
+.cover-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;background:
+  linear-gradient(180deg,rgba(6,20,11,.80) 0%,rgba(6,20,11,.62) 34%,rgba(6,20,11,.72) 64%,rgba(6,20,11,.94) 100%),
+  radial-gradient(120% 78% at 50% 45%,transparent 12%,rgba(6,20,11,.55) 78%)}
+/* lift the hero copy above the scrim — but skip .scroll-cue, which is already
+   absolutely positioned against the cover and carries its own z-index. Forcing
+   position:relative on it dropped it into the flex flow, on top of the CTA. */
+.cover>*:not(.cover-media):not(.cover-scrim):not(.scroll-cue){position:relative;z-index:2}
+/* --drift is set from the scroll pass so the dot field trails the page slightly */
+.cover::after{content:"";position:absolute;inset:0;z-index:1;background-image:radial-gradient(rgba(174,198,180,.10) 1px,transparent 1px);background-size:26px 26px;background-position:0 var(--drift,0);mask-image:radial-gradient(700px 500px at 80% 20%,#000 20%,transparent 75%);pointer-events:none;will-change:background-position}
+.cover .scroll-cue{transition:opacity .4s var(--ease-soft)}
 .cover .eyebrow{margin-bottom:1.6rem}
-.cover h1{font-size:clamp(2.1rem,6.4vw,6.4rem);font-weight:840;line-height:.95;letter-spacing:-.015em;max-width:12ch}
+.cover h1{font-size:clamp(2.4rem,7vw,7rem);font-weight:700;line-height:.94;letter-spacing:-.02em;max-width:13ch;margin-inline:auto}
 .cover h1 em{font-style:normal;color:var(--mint)}
-.cover .prep{margin-top:2.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;font-family:var(--mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cover .prep{margin-top:2.4rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.6rem 1rem;font-family:var(--mono);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,254,247,.82)}
 .cover .prep b{color:var(--ink);font-weight:500}
 .cover .prep::before{content:"";width:2.6rem;height:1px;background:var(--mint)}
-.cover p.lede{margin-top:1.4rem;max-width:46ch;color:var(--muted);font-size:1.06rem}
+.cover p.lede{margin-top:1.5rem;max-width:52ch;margin-inline:auto;color:rgba(255,254,247,.90);font-size:1.1rem}
 .cover .demo-cue{margin-top:1.6rem}
 .cover .demo-cue a{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(1,169,79,.4);border-radius:99px;padding:.55rem 1.1rem;transition:background .2s,border-color .2s}
 .cover .demo-cue a:hover{background:rgba(1,169,79,.12);border-color:var(--mint)}
-.cover .scroll-cue{position:absolute;bottom:2rem;left:clamp(1.2rem,6vw,5rem);font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);animation:cue 2.6s ease-in-out infinite}
+.cover .scroll-cue{position:absolute;z-index:2;bottom:2rem;left:0;right:0;text-align:center;font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,254,247,.68);animation:cue 2.6s ease-in-out infinite}
 @keyframes cue{50%{transform:translateY(6px);opacity:.5}}
-@media(prefers-reduced-motion:reduce){.cover .scroll-cue{animation:none}.reveal{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.cover .scroll-cue{animation:none}}
 
 /* ---------- section chrome ---------- */
-section{padding:clamp(4rem,9vw,7.5rem) clamp(1.2rem,6vw,5rem)}
+section{padding:clamp(4.5rem,10vw,9rem) clamp(1.2rem,6vw,5rem)}
 .sec-head{display:grid;grid-template-columns:auto 1fr;gap:1.2rem 2rem;align-items:baseline;border-top:1px solid var(--line);padding-top:1.6rem;margin-bottom:clamp(2.5rem,5vw,4rem)}
-.sec-head .num{font-family:var(--mono);font-weight:600;font-size:.8rem;color:var(--mint-lt);letter-spacing:.15em}
-.sec-head h2{font-size:clamp(1.45rem,4.5vw,3.4rem);font-weight:800;letter-spacing:-.01em;overflow-wrap:anywhere}
+.sec-head .num{font-family:var(--mono);font-weight:600;font-size:.8rem;color:var(--accent);letter-spacing:.15em}
+.sec-head h2{font-size:clamp(1.45rem,4.5vw,3.4rem);font-weight:700;letter-spacing:-.01em;overflow-wrap:anywhere}
 .sec-head p{grid-column:2;max-width:62ch;color:var(--muted)}
 
 /* ---------- product spreads ---------- */
 .product{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(1.5rem,4vw,4rem);align-items:start;padding:clamp(2.5rem,5vw,4rem) 0;border-top:1px solid var(--line)}
 .product:first-of-type{border-top:none;padding-top:0}
+/* a spread with no field media has a short info column next to a full-height
+   render; centring it beats leaving ~220px of dead space under the copy */
+.product:not(:has(.media)){align-items:center}
 .product .stage{background:linear-gradient(180deg,var(--raise),var(--surface));border:1px solid var(--line);border-radius:6px;padding:clamp(1.5rem,3vw,2.6rem);display:flex;align-items:center;justify-content:center;position:sticky;top:5.2rem}
-.product .stage img{max-height:440px;width:auto;max-width:100%;filter:drop-shadow(0 30px 40px rgba(0,0,0,.5))}
+.product .stage img{max-height:440px;width:auto;max-width:100%;filter:var(--shadow-art)}
 .product .info .kicker{margin-bottom:.5rem}
-.product h3{font-size:clamp(1.6rem,3.2vw,2.4rem);font-weight:800;margin-bottom:.9rem}
+.product h3{font-size:clamp(1.6rem,3.2vw,2.4rem);font-weight:700;margin-bottom:.9rem}
 .product .desc{color:var(--muted);max-width:60ch;margin-bottom:1.4rem}
 .specs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.8rem}
 .specs span{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:.32rem .75rem}
@@ -104,26 +199,52 @@ section{padding:clamp(4rem,9vw,7.5rem) clamp(1.2rem,6vw,5rem)}
 .media{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));align-items:start}
 .media figure{position:relative;border-radius:5px;overflow:hidden;background:var(--surface);border:1px solid var(--line);cursor:zoom-in}
 .media img,.media video{width:100%;height:auto}
+/* tile shapes: .sq crops a portrait tile to match its square neighbors;
+   .wide spans the full row so an odd tile count never strands dead space */
+.media figure.sq img,.media figure.sq video{aspect-ratio:1/1;object-fit:cover}
+.media figure.wide{grid-column:1/-1}
+.media figure.wide img,.media figure.wide video{aspect-ratio:2.05/1;object-fit:cover}
+@media(max-width:520px){.media figure.wide img,.media figure.wide video{aspect-ratio:4/3}}
+/* posters load on approach, so give the video box a branded fill rather than
+   letting an empty frame flash black against the page */
+video{background:var(--raise)}
 
 .media figcaption{position:absolute;inset:auto 0 0 0;padding:1.5rem .8rem .6rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(241,246,243,.92);background:linear-gradient(transparent,rgba(6,12,9,.85));pointer-events:none}
 .vwrap{position:relative;cursor:pointer}
 .vwrap .playbtn{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;border:1px solid rgba(241,246,243,.5);background:rgba(6,15,11,.55);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;pointer-events:none}
 .vwrap:hover .playbtn{transform:scale(1.08);background:rgba(1,169,79,.25)}
+
+/* ---------- mosaics ---------- */
+#booths{padding-bottom:clamp(1.5rem,3vw,2.5rem)}
+#mosaics{padding-top:clamp(2rem,4.5vw,4rem)}
+.mosaic-demo{max-width:1100px;margin:0 auto;padding:0 1.2rem}
+.mosaic-frame{position:relative;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:#08110c;cursor:pointer}
+.mosaic-frame canvas{display:block;width:100%;height:auto}
+.mosaic-cap{margin:.7rem 0 0;font-family:var(--mono);font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.mosaic-points{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:1.6rem}
+.mosaic-points div{border:1px solid var(--line);border-radius:5px;padding:.9rem 1rem;background:var(--surface)}
+.mosaic-points b{display:block;font-size:.85rem;margin-bottom:.25rem}
+.mosaic-points span{font-size:.8rem;color:var(--muted);line-height:1.45}
 .playbtn svg{width:20px;height:20px;fill:var(--ink);margin-left:3px}
-.vwrap.playing .playbtn{display:none}
-.vwrap video{cursor:pointer}
 
 /* ---------- enhancement / takeaway cards ---------- */
-.cards{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:start}
+.cards{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:stretch}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
-.card .art{aspect-ratio:4/3;overflow:hidden;position:relative;background:var(--raise)}
+.card .art{aspect-ratio:4/3;overflow:hidden;position:relative;background:var(--raise);cursor:zoom-in}
 #gamification-cards .card .art{aspect-ratio:16/9}
-#enhancements .card .art{aspect-ratio:auto}
-.cards .card .art:not(#gamification-cards .art){cursor:zoom-in}
+/* Enhancement source art runs square, 2:3 portrait and 3:2 landscape. A single square
+   crop keeps the grid even; object-position biases up so faces survive. Full frame is
+   one click away in the lightbox. */
+#enhancements .card .art{aspect-ratio:1/1}
+/* six cards: hold them to three across so they read as 3×2 rather than 4+2,
+   and the artwork gets the extra width it deserves */
+@media(min-width:1080px){#enhancements .cards{grid-template-columns:repeat(3,1fr)}}
 .card .art img,.card .art video{width:100%;height:100%;object-fit:cover}
-#enhancements .card .art img,#enhancements .card .art video{height:auto;object-fit:initial;display:block}
+#enhancements .card .art img,#enhancements .card .art video{object-position:center 30%}
 .card .txt{padding:1.2rem 1.2rem 1.4rem}
-.card h4{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:1.02rem;letter-spacing:.02em;margin-bottom:.4rem}
+/* Gyst is a display face — it earns its keep at h1/h2/h3 sizes and gets muddy at
+   ~1rem uppercase. Small headings run in the UI grotesk with real tracking. */
+.card h3{font-family:var(--body);font-weight:600;text-transform:uppercase;font-size:.86rem;letter-spacing:.09em;margin-bottom:.55rem;color:var(--ink)}
 .card p{color:var(--muted);font-size:.92rem}
 .card .kicker{display:block;margin-bottom:.5rem}
 .card a.case{display:inline-block;margin-top:.7rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
@@ -132,45 +253,133 @@ section{padding:clamp(4rem,9vw,7.5rem) clamp(1.2rem,6vw,5rem)}
 /* ---------- platform ---------- */
 .plat{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .plat .p{border:1px solid var(--line);border-radius:6px;padding:1.5rem;background:linear-gradient(180deg,var(--surface),transparent)}
-.plat .p svg{width:26px;height:26px;stroke:var(--mint);fill:none;stroke-width:1.5;margin-bottom:1rem}
-.plat h4{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:.98rem;margin-bottom:.45rem}
+.plat .p svg{width:26px;height:26px;stroke:var(--accent);fill:none;stroke-width:1.5;margin-bottom:1rem}
+.plat h3{font-family:var(--body);font-weight:600;text-transform:uppercase;font-size:.84rem;letter-spacing:.09em;margin-bottom:.6rem}
 .plat p{color:var(--muted);font-size:.9rem}
 
 /* ---------- asset kit band ---------- */
 .kit{margin:0 clamp(1.2rem,6vw,5rem);border:1px solid var(--mint-deep);border-radius:8px;background:
   radial-gradient(600px 300px at 90% 0%,rgba(1,169,79,.14),transparent 60%),var(--surface);
   padding:clamp(2rem,5vw,3.5rem);display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center}
-.kit h2{font-size:clamp(1.5rem,3.4vw,2.4rem);font-weight:800;text-transform:uppercase;margin-bottom:.7rem}
+.kit h2{font-size:clamp(1.5rem,3.4vw,2.4rem);font-weight:700;text-transform:uppercase;margin-bottom:.7rem}
 .kit p{color:var(--muted);max-width:52ch}
 .kit .actions{display:flex;flex-direction:column;gap:.7rem}
 .kit .actions a{font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:.9rem 1.6rem;border-radius:4px}
 .kit .actions .primary{background:var(--mint);color:var(--mint-ink);font-weight:500}
-.kit .actions .primary:hover{background:#12C76B}
+.kit .actions .primary:hover{background:var(--mint-hi)}
 .kit .actions .ghost{border:1px solid var(--line);color:var(--muted)}
 .kit .actions .ghost:hover{color:var(--ink);border-color:var(--muted)}
 @media(max-width:800px){.kit{grid-template-columns:1fr}}
 
-.connect-strip{display:flex;gap:1.2rem;align-items:flex-start;border:1px solid var(--line);border-radius:8px;
-  padding:clamp(1.2rem,2.5vw,1.8rem) clamp(1.4rem,3vw,2.2rem);background:linear-gradient(180deg,var(--surface),transparent)}
-.connect-strip svg{width:26px;height:26px;flex:none;stroke:var(--mint);fill:none;stroke-width:1.5;margin-top:.2rem}
-.connect-strip p{color:var(--muted);font-size:.95rem;max-width:90ch}
-.connect-strip b{color:var(--ink);font-weight:600}
+/* ---------- credibility band ---------- */
+/* no bottom rule: the following .sec-head already draws one, and at this spacing
+   the pair reads as a stray double line */
+.cred{padding:clamp(2.6rem,5vw,4.2rem) clamp(1.2rem,6vw,5rem) clamp(2rem,4vw,3rem);
+  background:radial-gradient(900px 340px at 50% 0%,rgba(1,169,79,.07),transparent 65%)}
+.cred .eyebrow{margin-bottom:1.5rem}
+/* client wall: a hairline grid reads as evidence, where an inline list of names
+   read as a list. Borders live on the cells (right+bottom) with the container
+   supplying top+left, rather than a gap over a coloured container — that trick
+   paints the container colour through any empty cells in a short last row. */
+.cred-wall{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  border-top:1px solid var(--line);border-left:1px solid var(--line);
+  border-radius:8px;overflow:hidden;margin-bottom:2.4rem}
+/* 25 entries divide evenly only by five, so pin five across once there is room */
+@media(min-width:1180px){.cred-wall{grid-template-columns:repeat(5,1fr)}}
+.cred-wall>div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:1.05rem 1.15rem;display:flex;flex-direction:column;justify-content:center;
+  min-height:5.4rem;transition:background .4s var(--ease-soft)}
+.cred-wall>div:hover{background:var(--surface)}
+.cred-wall b{font-family:var(--disp);font-weight:700;text-transform:uppercase;
+  font-size:1.02rem;letter-spacing:.012em;line-height:1.18;color:var(--ink)}
+.cred-wall span{margin-top:.34rem;font-family:var(--body);font-size:.65rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--dim);line-height:1.5}
+@media(max-width:560px){.cred-wall>div{min-height:0;padding:.9rem 1rem}}
+.cred-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1.4rem 1rem;
+  border-top:1px solid var(--line);padding-top:1.9rem}
+.cred-stats b{display:block;font-family:var(--disp);font-weight:700;font-size:clamp(1.5rem,2.8vw,2.2rem);
+  color:var(--accent);line-height:1}
+.cred-stats i{display:block;margin-top:.45rem;font-style:normal;font-family:var(--mono);font-size:.65rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);line-height:1.7}
+
+/* ---------- mid-page call to action ---------- */
+/* the band sits between two sections, so their padding would otherwise stack into
+   a ~200px dead gap; #why gives up its bottom padding to the band instead */
+#why{padding-bottom:clamp(1.5rem,3vw,2.5rem)}
+.cta-band{margin:0 clamp(1.2rem,6vw,5rem);padding:clamp(1.6rem,3.5vw,2.4rem) clamp(1.5rem,4vw,2.8rem);
+  border:1px solid var(--mint-deep);border-radius:8px;display:flex;flex-wrap:wrap;gap:1.2rem 2rem;
+  align-items:center;justify-content:space-between;background:linear-gradient(100deg,rgba(1,169,79,.10),transparent 70%),var(--surface)}
+.cta-band p{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(1.05rem,2vw,1.5rem);line-height:1.2}
+.cta-band span{display:block;font-family:var(--body);font-weight:400;text-transform:none;font-size:.93rem;color:var(--muted);margin-top:.4rem;max-width:52ch}
+.cta-band a{flex:none;font-family:var(--mono);font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;
+  background:var(--mint);color:var(--mint-ink);padding:.85rem 1.5rem;border-radius:4px;font-weight:500}
+.cta-band a:hover{background:var(--mint-hi)}
 
 .stage-logo{background:radial-gradient(420px 220px at 50% 42%,rgba(1,169,79,.10),transparent 70%),linear-gradient(180deg,var(--raise),var(--surface));min-height:300px}
 .stage-logo img{width:min(340px,70%);max-height:none;filter:drop-shadow(0 0 34px rgba(241,246,243,.18))}
 
+/* ---------- full-bleed break ----------
+   A cinematic pause between the field work and the live demos. Edge-to-edge,
+   so it breaks the column rhythm the rest of the page keeps. */
+.bleed{position:relative;margin:0;height:clamp(320px,52vh,620px);overflow:hidden;background:var(--raise)}
+.bleed img{width:100%;height:100%;object-fit:cover;object-position:50% 46%;
+  transform:scale(1.04);transition:transform 1.4s var(--ease)}
+.js .bleed.in img{transform:none}
+.bleed figcaption{position:absolute;inset:auto 0 0 0;z-index:2;
+  padding:clamp(2rem,6vw,4rem) clamp(1.2rem,6vw,5rem) clamp(1.4rem,3vw,2.2rem);
+  background:linear-gradient(transparent,rgba(6,20,11,.88));
+  font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,254,247,.88)}
+/* the break already supplies the breathing room, so the section after it does not
+   need its full top padding as well */
+.bleed + section{padding-top:clamp(2.5rem,5vw,4rem)}
+@media(prefers-reduced-motion:reduce){.bleed img,.js .bleed.in img{transform:none;transition:none}}
+
+/* ---------- live demo affordance ----------
+   The units render as device mock-ups, so a reader scrolling past reasonably
+   assumes they are screenshots. A pulsing tag anchored to each one says the
+   opposite before the caption gets a chance to. */
+.pg-unit,.duo-phone,.duo-board{position:relative}
+.live-tag{position:absolute;top:.8rem;right:.8rem;z-index:3;display:inline-flex;align-items:center;gap:.45rem;
+  font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:#FFFEF7;background:rgba(6,20,11,.74);backdrop-filter:blur(8px);
+  border:1px solid rgba(1,169,79,.5);border-radius:99px;padding:.38rem .7rem;pointer-events:none}
+.live-tag i{width:6px;height:6px;border-radius:50%;background:var(--mint);animation:livepulse 2.2s ease-out infinite}
+@keyframes livepulse{
+  0%{box-shadow:0 0 0 0 rgba(1,169,79,.6)}
+  70%{box-shadow:0 0 0 7px rgba(1,169,79,0)}
+  100%{box-shadow:0 0 0 0 rgba(1,169,79,0)}}
+
+/* the strongest proof on the page deserves more than a text link */
+.pc-cta{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--line);border-radius:99px;
+  padding:.62rem 1.15rem;transition:border-color .35s var(--ease-soft),background .35s var(--ease-soft),transform .4s var(--ease)}
+.pc-cta:hover{border-color:var(--mint);background:rgba(1,169,79,.12);transform:translateY(-2px)}
+
+@media(prefers-reduced-motion:reduce){
+  .live-tag i{animation:none}
+  .pc-cta:hover{transform:none}
+}
+
 /* ---------- proof of work ---------- */
 .proof-grid{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,470px);gap:clamp(2rem,4vw,4rem);align-items:start}
-.pg-copy h3{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.1;margin:.8rem 0 1rem}
+.pg-copy h3{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.1;margin:.8rem 0 1rem}
 .pg-copy>p{color:var(--muted);font-size:.98rem;max-width:50ch}
 .pg-stats{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1.6rem 0}
 .pg-stats .s{border:1px solid var(--line);border-radius:6px;padding:.85rem 1rem;background:linear-gradient(180deg,var(--surface),transparent)}
-.pg-stats .s b{display:block;font-family:var(--disp);font-weight:800;font-size:1.1rem;color:var(--mint);margin-bottom:.1rem}
+.pg-stats .s b{display:block;font-family:var(--disp);font-weight:700;font-size:1.1rem;color:var(--accent);margin-bottom:.1rem}
 .pg-stats .s span{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
-.pc-cta{display:inline-block;font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mint)}
-.pg-unit iframe{display:block;width:100%;aspect-ratio:100/188;border:none;overflow:hidden}
+.pc-cta{display:inline-block;font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+/* the embeds set body{background:transparent} so they inherit the catalog's colour,
+   but an iframe's own canvas still paints white underneath — which showed the Polaris
+   demo as a bright rectangle on the dark page. Paint the frame itself instead. */
+.pg-unit iframe{display:block;width:100%;aspect-ratio:100/170;border:none;overflow:hidden;background:var(--bg)}
+/* the demos are loaded by script; with scripting off, hide the empty frames and
+   offer the direct links instead of four blank boxes */
+html:not(.js) .pg-unit iframe,html:not(.js) .phone,html:not(.js) .board{display:none}
+.demo-fallback{padding:1.4rem;border:1px dashed var(--line);border-radius:6px;color:var(--muted);font-size:.92rem;text-align:center}
 .pg-cap{margin-top:.4rem;font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center}
-.proof-grid+.proof-grid{margin-top:clamp(3rem,6vw,5rem)}
+.proof-grid+.proof-grid,.duo-block+.proof-grid{margin-top:clamp(3rem,6vw,5rem)}
+.pg-unit .media{grid-template-columns:1fr 1fr}
 .proof-grid.flip{grid-template-columns:minmax(320px,470px) minmax(300px,1fr)}
 .proof-grid.flip .pg-copy{order:2}
 @media(max-width:820px){.proof-grid,.proof-grid.flip{grid-template-columns:1fr}.proof-grid.flip .pg-copy{order:0}.pg-unit{max-width:440px;margin:0 auto;width:100%}}
@@ -179,40 +388,45 @@ section{padding:clamp(4rem,9vw,7.5rem) clamp(1.2rem,6vw,5rem)}
 
 /* ---------- InTouch integration ---------- */
 .intouch{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--mint);border:1px solid rgba(1,169,79,.35);border-radius:99px;padding:.32rem .75rem;
+  text-transform:uppercase;color:var(--accent);border:1px solid rgba(1,169,79,.35);border-radius:99px;padding:.32rem .75rem;
   background:rgba(1,169,79,.06)}
 .intouch em{font-style:normal;color:var(--dim)}
 .intouch b{font-weight:600;color:var(--muted);letter-spacing:.06em}
-.cards .card .txt .intouch{margin-top:.9rem;align-self:flex-start}
-.cards .card .txt{display:flex;flex-direction:column;align-items:flex-start}
+/* txt fills the remaining card height so the "works with" badge pins to the bottom
+   and lines up across a row of otherwise uneven copy */
+.cards .card .txt{display:flex;flex-direction:column;align-items:flex-start;flex:1}
+.cards .card .txt .intouch{margin-top:auto;align-self:flex-start}
+.cards .card .txt>:has(~.intouch){margin-bottom:.9rem}
 .intouch-band{border:1px solid rgba(1,169,79,.3);border-radius:8px;margin-bottom:clamp(1.6rem,3vw,2.4rem);
   padding:clamp(1.5rem,3.5vw,2.6rem);display:grid;grid-template-columns:minmax(280px,1.05fr) 1.4fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;
   background:radial-gradient(700px 300px at 0% 0%,rgba(1,169,79,.08),transparent 60%),linear-gradient(180deg,var(--surface),var(--bg))}
 .intouch-band .ib-logo{height:46px;width:auto;margin-bottom:1.1rem}
-.intouch-band h3{font-family:var(--disp);font-weight:800;font-size:clamp(1.2rem,2.2vw,1.7rem);line-height:1.12;margin-bottom:.8rem}
+.intouch-band h3{font-family:var(--disp);font-weight:700;font-size:clamp(1.2rem,2.2vw,1.7rem);line-height:1.12;margin-bottom:.8rem}
 .intouch-band .ib-copy p{color:var(--muted);font-size:.95rem;max-width:48ch}
 .ib-flow{display:grid;gap:.7rem}
 .ib-flow .step{display:flex;gap:1rem;align-items:baseline;border:1px solid var(--line);border-radius:6px;padding:.8rem 1rem;background:linear-gradient(180deg,var(--raise),transparent)}
-.ib-flow .step i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--mint);letter-spacing:.12em}
-.ib-flow .step div b{display:block;font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:.86rem}
+.ib-flow .step i{font-family:var(--mono);font-style:normal;font-size:.7rem;color:var(--accent);letter-spacing:.12em}
+.ib-flow .step div b{display:block;font-family:var(--body);font-weight:600;text-transform:uppercase;font-size:.78rem;letter-spacing:.08em;margin-bottom:.15rem}
 .ib-flow .step div span{color:var(--muted);font-size:.84rem}
 @media(max-width:820px){.intouch-band{grid-template-columns:1fr}}
 
 /* ---------- strikeout duo demo ---------- */
 .duo-block{margin-top:clamp(3rem,6vw,5rem)}
 .duo-head{display:grid;grid-template-columns:minmax(300px,1fr) minmax(280px,440px);gap:clamp(2rem,4vw,4rem);align-items:center;margin-bottom:clamp(1.6rem,3vw,2.5rem)}
-.duo-head h3{font-family:var(--disp);font-weight:800;text-transform:uppercase;font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.1;margin:.8rem 0 1rem}
+.duo-head h3{font-family:var(--disp);font-weight:700;text-transform:uppercase;font-size:clamp(1.35rem,2.6vw,2rem);line-height:1.1;margin:.8rem 0 1rem}
 .duo-head p{color:var(--muted);font-size:.98rem;max-width:56ch}
 .duo-head b{color:var(--ink);font-weight:600}
 .duo-head .pg-stats{margin:0}
-.duo{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:clamp(1.2rem,2.5vw,2.2rem);align-items:start}
+/* the fan app is built for a 320px-wide phone; at the old 300px shell its inner
+   viewport was 280px and the header's "Live Wall" pill was clipped off the edge */
+.duo{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:clamp(1.2rem,2.5vw,2.2rem);align-items:start}
 .phone{border-radius:26px;padding:9px;background:linear-gradient(150deg,#23282c,#101315 60%,#181c1f);border:1px solid #383f44;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 50px rgba(0,0,0,.55)}
 .phone iframe{display:block;width:100%;aspect-ratio:9/17.5;border:none;border-radius:18px;background:#000}
 .board{border-radius:10px;padding:clamp(8px,1.2vw,13px);background:linear-gradient(150deg,#23282c,#101315 60%,#181c1f);border:1px solid #383f44;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 50px rgba(0,0,0,.55)}
 .board iframe{display:block;width:100%;aspect-ratio:16/9;border:none;border-radius:4px;background:#000}
-@media(max-width:820px){.duo-head{grid-template-columns:1fr}.duo{grid-template-columns:1fr}.duo-phone{max-width:300px;margin:0 auto;width:100%}}
+@media(max-width:820px){.duo-head{grid-template-columns:1fr}.duo{grid-template-columns:1fr}.duo-phone{max-width:340px;margin:0 auto;width:100%}}
 
 /* ---------- lightbox ---------- */
 #lightbox{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:.9rem;
@@ -236,11 +450,15 @@ section{padding:clamp(4rem,9vw,7.5rem) clamp(1.2rem,6vw,5rem)}
 .cf-actions{display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
 .cf-submit{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mint-ink);
   background:var(--mint);border:none;border-radius:4px;padding:.85rem 1.4rem;cursor:pointer;transition:background .2s}
-.cf-submit:hover{background:#12C76B}
+.cf-submit:hover{background:var(--mint-hi)}
 .cf-submit[disabled]{opacity:.55;cursor:default}
 .cf-status{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.cf-status.ok{color:var(--mint)}
-.cf-status.err{color:#FF7A7A}
+.cf-status.ok{color:var(--accent)}
+.cf-status.err{color:var(--err)}
+/* the fallback mail link has to be obviously clickable — it is the only route the
+   lead has left when the POST is blocked */
+.cf-status a{color:var(--err);text-decoration:underline;text-underline-offset:3px;font-weight:600}
+.cf-status a:hover{color:var(--accent)}
 
 /* ---------- footer ---------- */
 footer{padding:4rem clamp(1.2rem,6vw,5rem) 3rem;display:flex;flex-wrap:wrap;gap:2rem;align-items:center;justify-content:space-between;border-top:1px solid var(--line);margin-top:clamp(4rem,8vw,6rem)}
@@ -248,29 +466,85 @@ footer img{height:24px;width:auto}
 footer .fine{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
 footer .fine a{color:var(--muted)}
 
-/* ---------- reveal ---------- */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
-.reveal.in{opacity:1;transform:none}
+/* ---------- reveal ----------
+   Gated behind .js so the catalog is fully readable if scripting fails or is blocked
+   — without this, an IntersectionObserver hiccup leaves the whole page at opacity:0. */
+.reveal{opacity:1}
+.js .reveal{opacity:0;transform:translateY(28px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .reveal.in{opacity:1;transform:none}
+
+/* Staggered containers: the box itself never fades — its children arrive in
+   sequence, which reads as deliberate rather than as one block switching on.
+   --i is assigned per child in script. */
+.js .reveal.stagger{opacity:1;transform:none}
+.js .reveal.stagger>*{opacity:0;transform:translateY(26px);
+  transition:opacity .85s var(--ease),transform .85s var(--ease);
+  transition-delay:calc(var(--i,0)*65ms)}
+.js .reveal.stagger.in>*{opacity:1;transform:none}
+/* the roster is a long single line of names — a quicker cadence suits it */
+.js .cred-wall.stagger>*{transform:translateY(12px);transition-delay:calc(var(--i,0)*22ms)}
+
+/* artwork settles out of a slight push-in as its card arrives */
+.js .reveal .art img,.js .reveal .art video,
+.js .reveal figure img,.js .reveal figure video{
+  transform:scale(1.05);transition:transform 1.2s var(--ease)}
+.js .reveal.in .art img,.js .reveal.in .art video,
+.js .reveal.in figure img,.js .reveal.in figure video{transform:none}
+
+/* scroll progress — a hairline that fills as the catalog is read */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;
+  background:linear-gradient(90deg,var(--mint-deep),var(--mint));
+  transform:scaleX(var(--p,0));transform-origin:0 50%;
+  will-change:transform;pointer-events:none}
+
+/* interaction: a short lift, never a bounce */
+.card,.plat .p{transition:transform .5s var(--ease),border-color .35s var(--ease-soft)}
+.card:hover,.plat .p:hover{transform:translateY(-4px);border-color:rgba(1,169,79,.42)}
+.cta-band a,.btn-kit,.kit .actions a{transition:transform .4s var(--ease),background .3s var(--ease-soft)}
+.cta-band a:hover,.kit .actions .primary:hover{transform:translateY(-2px)}
+.nav{transition:border-color .3s var(--ease-soft),box-shadow .4s var(--ease-soft)}
+.nav.scrolled{box-shadow:0 12px 34px -22px rgba(0,0,0,.9)}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .js .reveal,.js .reveal.stagger>*{opacity:1;transform:none;transition:none}
+  .js .reveal .art img,.js .reveal .art video,
+  .js .reveal figure img,.js .reveal figure video{transform:none;transition:none}
+  .card:hover,.plat .p:hover,.cta-band a:hover,.kit .actions .primary:hover{transform:none}
+  .progress{display:none}
+}
 </style>
 </head>
-<body>
+<body class="band-light">
+<script>document.documentElement.classList.add('js')</script>
+<a class="skip" href="#main">Skip to catalog</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
 
-<nav class="nav" id="nav" aria-label="Catalog sections">
-  <a class="brand" href="#top"><img src="assets/img/pivot-logo.png" alt="PivotXP" width="142" height="34"><span class="bx">×</span><img class="jm" src="assets/img/wmevents-mark.svg" alt="WM Events"></a>
+<nav class="nav band-dark" id="nav" aria-label="Catalog sections">
+  <a class="brand" href="#top"><img src="assets/img/pivot-logo.png" alt="PivotXP" width="2101" height="607"><span class="bx">×</span><img class="jm" src="assets/img/wmevents-mark.svg" alt="WM Events" width="150" height="72"></a>
   <div class="nav-links">
     <a href="#booths">Booths</a>
+    <a href="#mosaics">Mosaics</a>
     <a href="#enhancements">Enhancements</a>
     <a href="#takeaways">Takeaways</a>
     <a href="#gamification">Gamification</a>
     <a href="#platform">Platform</a>
     <a href="#installs">Field</a>
     <a href="#proof">Demo</a>
+    <a href="#why">Why Pivot</a>
     <a href="#contact">Contact</a>
     <a class="btn-kit" href="kit.html">Asset Kit</a>
   </div>
 </nav>
 
-<header class="cover">
+<main id="main">
+<header class="cover band-dark" id="top">
+  <div class="cover-media">
+    <video id="heroVid" class="cover-vid" muted loop playsinline preload="none" aria-hidden="true"
+           poster="assets/img/hero-poster.webp" width="1280" height="720"></video>
+  </div>
+  <div class="cover-scrim"></div>
   <p class="eyebrow">PivotXP · Experiential Technology</p>
   <h1>The<br>Experience<br><em>Catalog</em></h1>
   <p class="prep">Prepared for <b>&nbsp;WM Events</b>&nbsp;· August 2026</p>
@@ -279,8 +553,57 @@ footer .fine a{color:var(--muted)}
   <span class="scroll-cue">Scroll ↓</span>
 </header>
 
+<!-- ==================== CREDIBILITY BAND ====================
+     Every name below already appears in a caption further down this page —
+     this band just collects them into one moment, which is what a prospect
+     actually scans for. Counts are provable from the catalog contents. -->
+<div class="cred band-light" id="clients">
+  <p class="eyebrow">Where this kit has already worked</p>
+  <div class="cred-wall reveal stagger">
+    <div><b>Chevrolet</b><span>CMA Fest · State Fair of Texas</span></div>
+    <div><b>Hey Dude</b><span>WM Phoenix Open selfies</span></div>
+    <div><b>Polaris</b><span>“Tough Doesn’t Quit” kiosk</span></div>
+    <div><b>AbbVie × MLB</b><span>Striking Out Cancer</span></div>
+    <div><b>USAA × NFL</b><span>Salute to Service</span></div>
+    <div><b>CMA Awards</b><span>Car Karaoke</span></div>
+    <div><b>CMA Fest</b><span>Western Glam AI</span></div>
+    <div><b>Jose Cuervo × UFC</b><span>UFC X Selfie Station</span></div>
+    <div><b>Beckers Bridal</b><span>“I Said Yes” selfies</span></div>
+    <div><b>GMC</b><span>Basecamp Selfie Station</span></div>
+    <div><b>Discover × Big Ten</b><span>Hoops Selfie Station</span></div>
+    <div><b>ESPN × ACC</b><span>Tournament PRO booth</span></div>
+    <div><b>Progressive</b><span>“Big Fish Small Pond”</span></div>
+    <div><b>World of Chocolate</b><span>Chicago gala PRO booth</span></div>
+    <div><b>Puttshack</b><span>Holiday 360 spins</span></div>
+    <div><b>GM</b><span>EV background-removal scenes</span></div>
+    <div><b>Universal Studios</b><span>Array bullet-time</span></div>
+    <div><b>Argylle</b><span>Premiere bullet-time</span></div>
+    <div><b>LIV Golf</b><span>Live leaderboards</span></div>
+    <div><b>UFC</b><span>Weigh-in posters</span></div>
+    <div><b>Equinox</b><span>Music Trivia leaderboard</span></div>
+    <div><b>Speedway Classic</b><span>Pitch Against the Machine</span></div>
+    <div><b>Army–Navy</b><span>Football toss + scoreboard</span></div>
+    <div><b>Ally</b><span>ACC bucket wall</span></div>
+    <div><b>T. Rowe Price</b><span>ACC Curiosity Challenge</span></div>
+    <div><b>ACC Baseball</b><span>Trading cards</span></div>
+    <div><b>Lexus</b><span>Trading cards</span></div>
+    <div><b>Ticketmaster</b><span>Trading cards</span></div>
+    <div><b>American Family Insurance</b><span>Marvel robot capture</span></div>
+    <div><b>Downy Unstopables</b><span>Selfie Station</span></div>
+    <div><b>State Fair of Texas</b><span>Magnets + postcards</span></div>
+    <div><b>US Cellular</b><span>Summerfest button wall</span></div>
+    <div><b>Summerfest</b><span>Giant boombox build</span></div>
+  </div>
+  <div class="cred-stats reveal stagger">
+    <div><b>400+</b><i>Brands activated</i></div>
+    <div><b>6</b><i>Capture systems in the line</i></div>
+    <div><b>3</b><i>Live demos you can drive below</i></div>
+    <div><b>One</b><i>Vendor — build, wrap, crew, support</i></div>
+  </div>
+</div>
+
 <!-- ==================== 01 BOOTHS ==================== -->
-<section id="booths">
+<section id="booths" class="band-light">
   <div class="sec-head reveal">
     <span class="num">01</span>
     <h2>The Booth Line</h2>
@@ -289,86 +612,92 @@ footer .fine a{color:var(--muted)}
 
   <!-- Selfie Station -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-lite.png" alt="Selfie Station kiosk with halo ring light, shown in a WM Events custom wrap" loading="lazy" width="487" height="1000"></div>
+    <div class="stage"><img src="assets/img/render-lite.webp" alt="Selfie Station kiosk with halo ring light, shown in a WM Events custom wrap" loading="lazy" width="679" height="1734"></div>
     <div class="info">
       <span class="kicker">PB·01</span>
       <h3>Selfie Station</h3>
       <p class="desc">The ring-light icon, rebuilt as brandable real estate. A freestanding kiosk with a halo light and a full-wrap column that disappears into any footprint — and keeps a line moving all day.</p>
       <div class="specs"><span>Stills · GIF · Boomerang · Video</span><span>Instant SMS / Email / QR</span><span>Full custom wrap</span><span>2 ft footprint</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
-      <p class="seen">In the field&nbsp;· <b>Baird 100 Years · Downy Unstopables · Marvel</b></p>
+      <p class="seen">In the field&nbsp;· <b>Jose Cuervo × UFC · MLB · Downy Unstopables</b></p>
       <div class="media">
-        <figure class="vwrap"><video preload="none" poster="assets/poster/selfie-demo.jpg" src="assets/video/selfie-demo.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>On-screen experience</figcaption></figure>
-        <figure class="vwrap"><video preload="none" poster="assets/poster/selfie-unstopables.jpg" src="assets/video/selfie-unstopables.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Downy Unstopables</figcaption></figure>
-        <figure><img src="assets/img/selfie-event-1.jpg" alt="A corridor of lit Selfie Station kiosks along a branded step-and-repeat at Baird's centennial" loading="lazy" width="1080" height="1920"><figcaption>Baird · 100 Years</figcaption></figure>
-        <figure><img src="assets/img/selfie-event-2.jpg" alt="Three guests photographed at a Selfie Station in front of a branded wall" loading="lazy" width="1400" height="1400"><figcaption>Baird · centennial</figcaption></figure>
-        <figure><img src="assets/img/selfie-event-3.jpg" alt="A guest portrait rendered into a huge live photo mosaic above the print bar" loading="lazy" width="1080" height="1920"><figcaption>Baird · live photo mosaic</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/selfie-demo.jpg" src="assets/video/selfie-demo.mp4" playsinline width="1080" height="1080"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>On-screen experience</figcaption></figure>
+        <figure><img src="assets/img/selfie-cuervo.jpg" alt="Guest posing with a UFC fighter inside a Jose Cuervo branded octagon set" loading="lazy" width="1600" height="1600"><figcaption>Jose Cuervo · UFC X</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/selfie-lite-1.jpg" src="assets/video/selfie-lite-1.mp4" playsinline width="1280" height="1280"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>MLB · Speedway Classic</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/selfie-lite-2.jpg" src="assets/video/selfie-lite-2.mp4" playsinline width="1600" height="1600"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Hey Dude Country · GIF output</figcaption></figure>
+        <figure class="sq"><img src="assets/img/selfie-discover.jpg" alt="Two Iowa fans posing under a Discover branded basketball hoop in a neon-lit Big Ten activation" loading="lazy" width="1080" height="1920"><figcaption>Discover × Big Ten</figcaption></figure>
+        <figure><img src="assets/img/selfie-beckers.jpg" alt="Bridal party photographed under an I Said Yes neon sign at Beckers Bridal" loading="lazy" width="1600" height="1600"><figcaption>Beckers Bridal</figcaption></figure>
+        <figure class="vwrap sq"><video preload="none" data-poster="assets/poster/selfie-unstopables.jpg" src="assets/video/selfie-unstopables.mp4" playsinline width="540" height="960"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Downy Unstopables</figcaption></figure>
+        <figure><img src="assets/img/selfie-event-2.jpg" alt="Kids on a carved-ice GMC truck at a GMC Basecamp winter activation" loading="lazy" width="1400" height="1400"><figcaption>GMC · Basecamp</figcaption></figure>
       </div>
     </div>
   </article>
 
   <!-- PRO -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-pro.png" alt="PRO booth, front and back, with adjustable tilting head unit" loading="lazy" width="793" height="1000"></div>
+    <div class="stage"><img src="assets/img/render-pro.webp" alt="PRO booth, front and back, with adjustable tilting head unit" loading="lazy" width="848" height="1174"></div>
     <div class="info">
       <span class="kicker">PB·02</span>
       <h3>PRO</h3>
       <p class="desc">Our workhorse capture system with a fully adjustable head that tilts to meet any set design — step-and-repeat, vignette, or vehicle. DSLR-grade glass on the front.</p>
       <div class="specs"><span>DSLR-grade capture</span><span>Adjustable head</span><span>Stills · GIF · Boomerang · Video</span><span>Physical takeaways</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
-      <p class="seen">In the field&nbsp;· <b>Foot Locker · Envsn Fest NYC</b></p>
+      <p class="seen">In the field&nbsp;· <b>CMA Fest · ESPN ACC Tournament · Progressive · USAA · World of Chocolate</b></p>
       <div class="media">
-        <figure ><img src="assets/img/pro-demo-1.jpg" alt="Studio headshot of a guest on a clean backdrop" loading="lazy"><figcaption>Foot Locker · Envsn Fest</figcaption></figure>
-        <figure ><img src="assets/img/pro-demo-2.jpg" alt="Studio headshot of a guest on a clean backdrop" loading="lazy"><figcaption>Studio-grade output</figcaption></figure>
-        <figure><img src="assets/img/pro-output.jpg" alt="Studio-quality headshot of a guest on a clean backdrop" loading="lazy" width="1400" height="933"><figcaption>Headshot kiosk · NYC</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/pro-demo-1.jpg" src="assets/video/pro-demo-1.mp4" playsinline width="1920" height="1280"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Capture flow</figcaption></figure>
+        <figure><img src="assets/img/pro-progressive.jpg" alt="Child riding a saddled giant bass sculpture at Progressive's Big Fish Small Pond activation" loading="lazy" width="1800" height="1200"><figcaption>Progressive · Big Fish Small Pond</figcaption></figure>
+        <figure><img src="assets/img/pro-chocolate.jpg" alt="Guests in an art-deco branded frame at the World of Chocolate gala benefiting AIDS Foundation Chicago" loading="lazy" width="1600" height="1600"><figcaption>World of Chocolate · Chicago</figcaption></figure>
+        <figure><img src="assets/img/pro-usaa-valero.jpg" alt="Family posed with the champion's trophy in a USAA branded output at the Valero Texas Open" loading="lazy" width="1600" height="1600"><figcaption>USAA · Valero Texas Open</figcaption></figure>
+        <figure class="sq"><img src="assets/img/pro-output.jpg" alt="Branded Chevrolet CMA Fest photo output of a guest with guitar in front of a gold record" loading="lazy" width="1400" height="933"><figcaption>Branded output · CMA Fest</figcaption></figure>
+        <figure class="sq"><img src="assets/img/pro-espn-acc.jpg" alt="Family in a marquee-light frame at the ESPN ACC Tournament photo activation in Atlanta" loading="lazy" width="1500" height="2100"><figcaption>ESPN · ACC Tournament</figcaption></figure>
       </div>
     </div>
   </article>
 
   <!-- Elevated Kiosk -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-kiosk.png" alt="Elevated Kiosk with LED edge lighting, large touch screen, and integrated printer" loading="lazy" width="750" height="1000"></div>
+    <div class="stage"><img src="assets/img/render-kiosk.webp" alt="Elevated Kiosk with LED edge lighting, large touch screen, and integrated printer" loading="lazy" width="1142" height="1504"></div>
     <div class="info">
       <span class="kicker">PB·03</span>
       <h3>Elevated Kiosk</h3>
       <p class="desc">The statement piece. A full-body kiosk with programmable LED edge lighting, a large portrait touch display, and DSLR-grade capture — with optional on-board printing, guests can walk away with a physical takeaway in seconds.</p>
       <div class="specs"><span>DSLR-grade capture</span><span>Stills · GIF · Boomerang · Video</span><span>Optional printing</span><span>Physical takeaways</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
-      
     </div>
   </article>
 
   <!-- Robot -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-robot.png" alt="Robotic camera arm mounted on a rail atop a branded base cabinet" loading="lazy" width="1000" height="667"></div>
+    <div class="stage"><img src="assets/img/render-robot.webp" alt="Robotic camera arm mounted on a rail atop a branded base cabinet" loading="lazy" width="637" height="837"></div>
     <div class="info">
       <span class="kicker">PB·04</span>
       <h3>Robot</h3>
       <p class="desc">A programmable robot arm that turns capture into a show. Repeatable cinematic moves — whip pans, glam passes, overhead sweeps — that no handheld operator can match, with a crowd gathered around every take.</p>
       <div class="specs"><span>Programmable moves</span><span>Cinematic slow-mo</span><span>Rail-mounted arm</span><span>Crowd magnet</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
-      <p class="seen">In the field&nbsp;· <b>ABC — The Oscars · Marvel × American Family Insurance · CMA Awards</b></p>
+      <p class="seen">In the field&nbsp;· <b>CMA Awards · USAA × NFL Salute to Service · Marvel × American Family Insurance</b></p>
       <div class="media">
-        <figure class="vwrap"><video preload="none" poster="assets/poster/robot-cma.jpg?v=2" src="assets/video/robot-cma.mp4?v=2" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>ABC · The Oscars</figcaption></figure>
-        <figure class="vwrap"><video preload="none" poster="assets/poster/robot-marvel.jpg" src="assets/video/robot-marvel.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Captain America · AmFam</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/robot-cma.jpg" src="assets/video/robot-cma.mp4" playsinline width="568" height="320"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>CMA Awards</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/robot-marvel.jpg" src="assets/video/robot-marvel.mp4" playsinline width="960" height="960"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Captain America · AmFam</figcaption></figure>
       </div>
     </div>
   </article>
 
   <!-- 360 -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-360.png" alt="360 camera platform with rotating boom arm, shown in a WM Events wrap" loading="lazy" width="1000" height="839"></div>
+    <div class="stage"><img src="assets/img/render-360.webp" alt="360 camera platform with rotating boom arm, shown in a WM Events wrap" loading="lazy" width="1338" height="1160"></div>
     <div class="info">
       <span class="kicker">PB·05</span>
       <h3>360 Camera</h3>
       <p class="desc">The spin that never stops earning shares. Guests step on the platform, the arm orbits, and a slow-motion 360 video with branded overlays hits their phone before they walk away. Mount it on truss for cinematic vehicle capture, or floor-mount it when space is tight.</p>
       <div class="specs"><span>Slow-mo orbit video</span><span>Truss or floor mount</span><span>Branded overlays</span><span>Instant delivery</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
-      <p class="seen">In the field&nbsp;· <b>CMA Fest</b></p>
+      <p class="seen">In the field&nbsp;· <b>CMA Fest · Puttshack</b></p>
       <div class="media">
-        <figure ><img src="assets/img/sixty-alt.jpg" alt="Tented clubhouse pavilion built for a private event" loading="lazy"><figcaption>Wheels Up · the Masters</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/360-overhead.jpg" src="assets/video/360-overhead.mp4" playsinline width="1080" height="1080"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Overhead 360</figcaption></figure>
+        <figure class="vwrap sq"><video preload="none" data-poster="assets/poster/360-event-1.jpg" src="assets/video/360-event-1.mp4" playsinline width="1080" height="1920"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Puttshack · Holiday 360</figcaption></figure>
       </div>
     </div>
   </article>
 
   <!-- Array -->
   <article class="product reveal">
-    <div class="stage"><img src="assets/img/render-array.png" alt="Array multi-camera gantry with seven camera lenses across the top beam" loading="lazy" width="803" height="1000"></div>
+    <div class="stage"><img src="assets/img/render-array.webp" alt="Array multi-camera gantry with seven camera lenses across the top beam" loading="lazy" width="1150" height="1453"></div>
     <div class="info">
       <span class="kicker">PB·06</span>
       <h3>Array</h3>
@@ -376,102 +705,224 @@ footer .fine a{color:var(--muted)}
       <div class="specs"><span>7 or 14 cameras, synced</span><span>Freeze + sweep effect</span><span>Walk-through gantry</span><span>Full custom wrap</span><span>AI background removal</span><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
       <p class="seen">In the field&nbsp;· <b>Argylle premiere · Universal Studios</b></p>
       <div class="media">
-        <figure class="vwrap"><video preload="none" poster="assets/poster/array-demo.jpg?v=2" src="assets/video/array-demo.mp4?v=2" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Argylle premiere · bullet-time</figcaption></figure>
+        <figure class="vwrap"><video preload="none" data-poster="assets/poster/array-demo.jpg?v=2" src="assets/video/array-demo.mp4?v=2" playsinline width="568" height="320"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span><figcaption>Argylle premiere · bullet-time</figcaption></figure>
       </div>
     </div>
   </article>
 </section>
 
-<!-- ==================== 02 ENHANCEMENTS ==================== -->
-<section id="enhancements">
+<!-- ==================== 02 MOSAICS ==================== -->
+<section id="mosaics" class="band-light">
   <div class="sec-head reveal">
     <span class="num">02</span>
+    <h2>Mosaics</h2>
+    <p>Every guest photo becomes one tile of something much bigger. Booth captures feed a growing brand image all event long — on screens as a live reveal, or printed and placed by hand on a physical wall — and the finished piece belongs to your client when the crowd goes home.</p>
+  </div>
+  <div class="mosaic-demo reveal">
+    <div class="mosaic-frame" id="mosaicFrame" role="img" aria-label="Live demo: hundreds of guest headshots assemble into the WM Events logo and tagline, with the artwork blended across the photos">
+      <canvas id="mosaicCanvas"></canvas>
+    </div>
+    <p class="mosaic-cap">Live demo · 500 guest photos, one image spanning all of them — click to rebuild</p>
+    <div class="mosaic-points">
+      <div><b>Fed by every booth</b><span>Each capture on site becomes a tile the moment it&rsquo;s shot — no extra step for guests.</span></div>
+      <div><b>Digital or printed</b><span>Run it on screens as a growing reveal, or print tiles guests place on the wall themselves.</span></div>
+      <div><b>The reveal is the show</b><span>The image only completes when the crowd participates — watching it fill is the draw.</span></div>
+      <div><b>Yours to keep</b><span>The finished mosaic — every attendee in one image — ships to your client after the event.</span></div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var COLS = 33, ROWS = 15, SPR_COLS = 20, SPR_N = 200, SPR_T = 72;
+  var frame = document.getElementById('mosaicFrame');
+  var cv = document.getElementById('mosaicCanvas');
+  if (!frame || !cv) return;
+  var ctx = cv.getContext('2d');
+  var sprite = new Image(), mark = new Image(), loaded = 0, queued = false, raf = 0;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function onAsset(){ loaded++; if (queued && loaded === 2) build(); }
+  sprite.onload = onAsset; mark.onload = onAsset;
+  var target = null;
+
+  function makeTarget(W, H){
+    var c = document.createElement('canvas'); c.width = W; c.height = H;
+    var x = c.getContext('2d');
+    x.fillStyle = '#1c3527'; x.fillRect(0, 0, W, H);
+    var F = function(s){ return '900 ' + s + 'px "Arial Black",Arial,sans-serif'; };
+    var capH = H * 0.42, markW = capH * 150 / 72, gap = capH * 0.24;
+    var evSize = capH * 1.38;
+    x.font = F(evSize);
+    var evW = x.measureText('EVENTS').width, maxLock = W * 0.88;
+    if (markW + gap + evW > maxLock) {
+      var k = maxLock / (markW + gap + evW);
+      capH *= k; markW *= k; gap *= k; evSize *= k;
+      x.font = F(evSize); evW = x.measureText('EVENTS').width;
+    }
+    var x0 = (W - (markW + gap + evW)) / 2, yMid = H * 0.38;
+    x.drawImage(mark, x0, yMid - capH / 2, markW, capH);
+    x.fillStyle = '#3fae63'; x.font = F(evSize); x.textBaseline = 'middle';
+    x.fillText('EVENTS', x0 + markW + gap, yMid + capH * 0.06);
+    var tagSize = H * 0.155;
+    x.font = F(tagSize);
+    while (x.measureText('THE LIFE OF THE PARTY').width > W * 0.78 && tagSize > 8) { tagSize--; x.font = F(tagSize); }
+    var w1 = x.measureText('THE LIFE ').width, w2 = x.measureText('OF THE ').width, w3 = x.measureText('PARTY').width;
+    var tx0 = (W - (w1 + w2 + w3)) / 2, tagY = yMid + capH / 2 + H * 0.20;
+    x.textBaseline = 'alphabetic';
+    x.fillStyle = '#3fae63'; x.fillText('THE LIFE ', tx0, tagY);
+    x.fillStyle = '#e87b48'; x.fillText('OF THE ', tx0 + w1, tagY);
+    x.fillStyle = '#efa0cb'; x.fillText('PARTY', tx0 + w1 + w2, tagY);
+    return c;
+  }
+
+  function fit(){
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    var t = Math.max(8, Math.floor(frame.clientWidth / COLS));
+    cv.style.width = '100%';
+    cv.width = Math.round(t * COLS * d);
+    cv.height = Math.round(t * ROWS * d);
+    target = makeTarget(cv.width, cv.height);
+    return cv.width / COLS;
+  }
+
+  function drawTile(i, t){
+    var col = i % COLS, row = (i / COLS) | 0;
+    var s = (Math.random() * SPR_N) | 0;
+    var g = Math.max(1, Math.round(t * 0.03));
+    var x = col * t + g / 2, y = row * t + g / 2, w = t - g;
+    ctx.drawImage(sprite, (s % SPR_COLS) * SPR_T, ((s / SPR_COLS) | 0) * SPR_T, SPR_T, SPR_T, x, y, w, w);
+    // the artwork spans across tiles: each photo is blended with its own
+    // slice of the full-resolution lockup, so edges and color gradients
+    // flow through neighbouring photos instead of tinting whole cells
+    ctx.globalAlpha = .48;
+    ctx.drawImage(target, x, y, w, w, x, y, w, w);
+    ctx.globalCompositeOperation = 'multiply';
+    ctx.globalAlpha = .58;
+    ctx.drawImage(target, x, y, w, w, x, y, w, w);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+  }
+
+  function build(){
+    if (loaded < 2) { queued = true; return; }
+    cancelAnimationFrame(raf);
+    var t = fit();
+    if (frame.clientWidth < 10) return;
+    ctx.fillStyle = '#12271b'; ctx.fillRect(0, 0, cv.width, cv.height);
+    var order = []; for (var i = 0; i < COLS * ROWS; i++) order.push(i);
+    for (var j = order.length - 1; j > 0; j--) { var k = (Math.random() * (j + 1)) | 0; var tmp = order[j]; order[j] = order[k]; order[k] = tmp; }
+    if (reduced) { for (var n = 0; n < order.length; n++) drawTile(order[n], t); return; }
+    var idx = 0;
+    (function step(){
+      for (var p = 0; p < 4 && idx < order.length; p++) drawTile(order[idx++], t);
+      if (idx < order.length) raf = requestAnimationFrame(step);
+    })();
+  }
+
+  var seen = false;
+  new IntersectionObserver(function(entries){
+    if (entries[0].isIntersecting && !seen) {
+      seen = true;
+      sprite.src = 'assets/img/mosaic-sprite.jpg';
+      mark.src = 'assets/img/wmevents-mark.svg';
+      queued = true; if (loaded === 2) build();
+    }
+  }, {threshold: .2}).observe(frame);
+
+  frame.addEventListener('click', build);
+  var rs; window.addEventListener('resize', function(){ clearTimeout(rs); if (seen) rs = setTimeout(build, 200); });
+})();
+</script>
+
+<!-- ==================== 03 ENHANCEMENTS ==================== -->
+<section id="enhancements" class="band-dark">
+  <div class="sec-head reveal">
+    <span class="num">03</span>
     <h2>AI Enhancements</h2>
     <p>A software layer that works on every booth in the line. Swap the world behind your guests, restyle them entirely, or set the whole frame in motion — rendered in seconds, on site.</p>
   </div>
-  <div class="cards reveal">
+  <div class="cards reveal stagger">
     <div class="card">
-      <div class="art"><img src="assets/img/enhance-throwing.jpg" alt="Guests composited into an art-directed living-room scene" loading="lazy" width="1400" height="1400"></div>
-      <div class="txt"><span class="kicker">ENH·01</span><h4>AI Image Regeneration</h4><p>A guest’s photo becomes the input to a full prompt — they’re regenerated inside a brand-built scene, like this gridiron hero moment.</p></div>
+      <div class="art"><img src="assets/img/enhance-throwing.jpg" alt="AI image regeneration example" loading="lazy" width="1400" height="1400"></div>
+      <div class="txt"><span class="kicker">ENH·01</span><h3>AI Image Regeneration</h3><p>A guest’s photo becomes the input to a full prompt — they’re regenerated inside a brand-built scene, like this gridiron hero moment.</p></div>
     </div>
     <div class="card">
       <div class="art"><img src="assets/img/enhance-western-glam.jpg" alt="Western Glam themed AI regeneration of a guest in a pink hat" loading="lazy" width="666" height="1000"></div>
-      <div class="txt"><span class="kicker">ENH·02</span><h4>Themed Regeneration</h4><p>The same regeneration engine, art-directed to a theme. At CMA Fest, guests stepped out of the booth in full “Western Glam.”</p></div>
+      <div class="txt"><span class="kicker">ENH·02</span><h3>Themed Regeneration</h3><p>The same regeneration engine, art-directed to a theme. At CMA Fest, guests stepped out of the booth in full “Western Glam.”</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/enh-keepsake.jpg" alt="Canvas tote printed with a guest's generated artwork" loading="lazy"></div>
-      <div class="txt"><span class="kicker">ENH·03</span><h4>AI Head Swap</h4><p>The guest’s face on a pre-approved branded body and scene — team kits, black tie, race suits — every logo, seam, and sponsor mark 100% on point.</p></div>
+      <div class="art vwrap"><video preload="none" data-poster="assets/poster/ai-suit.jpg" src="assets/video/ai-suit.mp4" playsinline width="640" height="960"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="txt"><span class="kicker">ENH·03</span><h3>AI Head Swap</h3><p>The guest’s face on a pre-approved branded body and scene — team kits, black tie, race suits — every logo, seam, and sponsor mark 100% on point.</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/enhance-1.jpg" alt="Headshot with the subject cleanly lifted from the backdrop" loading="lazy" width="1400" height="787"></div>
-      <div class="txt"><span class="kicker">ENH·04</span><h4>AI Background Removal</h4><p>The subjects stay exactly as shot — lifted from the booth and placed naturally into the scene, edges and all.</p></div>
+      <div class="art"><img src="assets/img/enhance-1-gm.jpg" alt="Two guests cleanly cut out and placed on a sunset LA street in front of a GM electric vehicle" loading="lazy" width="933" height="1400"></div>
+      <div class="txt"><span class="kicker">ENH·04</span><h3>AI Background Removal</h3><p>The subjects stay exactly as shot — lifted from the booth and placed naturally into the scene, edges and all, like this GM EV street scene.</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/enh-signage.jpg" alt="A lit marquee frame built as a photo moment" loading="lazy"></div>
-      <div class="txt"><span class="kicker">ENH·05</span><h4>Personalized Signage</h4><p>Guests type their name and it renders into the scene — a marquee, a menu board, a step-and-repeat.</p></div>
+      <div class="art vwrap"><video preload="none" data-poster="assets/poster/enhance-signage-2.jpg" src="assets/video/enhance-signage-2.mp4" playsinline width="1920" height="1280"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="txt"><span class="kicker">ENH·05</span><h3>Personalized Signage</h3><p>Background removal with a personal touch — guests type their name and it renders into the scene, like this family’s neon marquee at CMA Fest.</p></div>
     </div>
     <div class="card">
-      <div class="art vwrap"><video preload="none" poster="assets/poster/robot-marvel.jpg" src="assets/video/robot-marvel.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-      <div class="txt"><span class="kicker">ENH·06</span><h4>Cinematic Hero Video</h4><p>A photo plus a prompt becomes a short film of their entrance — an ad spot starring the guest.</p></div>
+      <div class="art vwrap"><video preload="none" data-poster="assets/poster/enhance-walkout.jpg" src="assets/video/enhance-walkout.mp4" playsinline width="480" height="384"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="txt"><span class="kicker">ENH·06</span><h3>AI Walk-Out Video</h3><p>A guest photo and an AI prompt become a custom walk-out video — the guest striding onto the field as the hero of game day.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ==================== 03 TAKEAWAYS ==================== -->
-<section id="takeaways">
+<!-- ==================== 04 TAKEAWAYS ==================== -->
+<section id="takeaways" class="band-light">
   <div class="sec-head reveal">
-    <span class="num">03</span>
+    <span class="num">04</span>
     <h2>Physical Takeaways</h2>
     <p>Digital delivery is table stakes. These leave the event on refrigerators, desks, and binders — and keep the brand living there long after load-out.</p>
   </div>
-  <div class="cards reveal">
+  <div class="cards reveal stagger">
     <div class="card">
-      <div class="art"><img src="assets/img/takeaway-magnets.webp" alt="Personalised postcard, front and back, with stamp box and address lines" loading="lazy" width="828" height="552"></div>
-      <div class="txt"><span class="kicker">TA·01</span><h4>Postcards</h4><p>Front: the guest. Back: an art-directed mailer, stamp box and address lines and all.</p></div>
+      <div class="art"><img src="assets/img/takeaway-magnets.webp" alt="Chevrolet State Fair of Texas magnets on a refrigerator" loading="lazy" width="828" height="552"></div>
+      <div class="txt"><span class="kicker">TA·01</span><h3>Magnets</h3><p>Pressed on site, minutes after capture — square, round, or postcard-sized. Shown from the State Fair of Texas.</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/takeaway-postcard.jpg" alt="A guest placing their printed portrait onto the mosaic wall" loading="lazy" width="1119" height="1400"></div>
-      <div class="txt"><span class="kicker">TA·02</span><h4>Mosaic Prints</h4><p>Each portrait prints as a sticker and goes onto the wall — the whole room builds one picture.</p></div>
+      <div class="art"><img src="assets/img/takeaway-postcard.jpg" alt="Chevrolet State Fair of Texas postcard, front and back with QR code" loading="lazy" width="1119" height="1400"></div>
+      <div class="txt"><span class="kicker">TA·02</span><h3>Postcards</h3><p>Front: the guest. Back: a stamped, art-directed mailer with a QR straight to the brand. Shown from the State Fair of Texas.</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/takeaway-cards.jpg" alt="Canvas tote printed with a guest's generated celestial artwork" loading="lazy" width="1400" height="1050"></div>
-      <div class="txt"><span class="kicker">TA·03</span><h4>Custom Merch</h4><p>Their own generated artwork, printed onto something they actually carry out of the room.</p></div>
+      <div class="art"><img src="assets/img/takeaway-cards-2.jpg" alt="Fan at the track holding his sleeved personalized Chevy Racing driver trading card" loading="lazy" width="1000" height="666"></div>
+      <div class="txt"><span class="kicker">TA·03</span><h3>Trading Cards</h3><p>Every guest becomes a rookie card — sleeved, collectible, and branded. Built for Chevy Racing, Lexus, Ticketmaster, and ACC Baseball.</p></div>
     </div>
     <div class="card">
-      <div class="art"><img src="assets/img/takeaway-poster.webp" alt="On-site photo print bar beneath the live mosaic wall" loading="lazy" width="828" height="552"></div>
-      <div class="txt"><span class="kicker">TA·04</span><h4>On-Site Print Bar</h4><p>A staffed print station in the room — magnets, prints, and posters pressed while they wait.</p></div>
+      <div class="art"><img src="assets/img/takeaway-poster.webp" alt="UFC 290 personalized fight poster with mailing tube" loading="lazy" width="828" height="552"></div>
+      <div class="txt"><span class="kicker">TA·04</span><h3>Posters</h3><p>Full-size prints of the money shot. At UFC weigh-ins, every fan steps on the scale and leaves with the poster to prove it.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ==================== 04 GAMIFICATION ==================== -->
-<section id="gamification">
+<!-- ==================== 05 GAMIFICATION ==================== -->
+<section id="gamification" class="band-light">
   <div class="sec-head reveal">
-    <span class="num">04</span>
+    <span class="num">05</span>
     <h2>Gamification &amp; Custom Software</h2>
     <p>Give guests something to win and they’ll queue for it — then hand you their data on the way in. Custom game builds with real-time scoring, built on the same platform as everything else in this catalog.</p>
   </div>
-  <div class="cards reveal" id="gamification-cards">
+  <div class="cards reveal stagger" id="gamification-cards">
     <div class="card">
-      <div class="art vwrap"><video preload="none" poster="assets/poster/karaoke.jpg?v=3" src="assets/video/karaoke.mp4?v=3" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-      <div class="txt"><span class="kicker">GAME·01</span><h4>Car Karaoke</h4><p>Guests take the driver’s seat and perform — cameras rolling, lyrics on screen, and a share-ready music video delivered at the door. Built for the CMA Awards.</p><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
+      <div class="art vwrap"><video preload="none" data-poster="assets/poster/karaoke.jpg?v=3" src="assets/video/karaoke.mp4?v=3" playsinline width="1920" height="1080"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="txt"><span class="kicker">GAME·01</span><h3>Car Karaoke</h3><p>Guests take the driver’s seat and perform — cameras rolling, lyrics on screen, and a share-ready music video delivered at the door. Built for the CMA Awards.</p><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
     </div>
     <div class="card">
-      <div class="art vwrap"><video preload="none" poster="assets/poster/pitch.jpg" src="assets/video/pitch.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-      <div class="txt"><span class="kicker">GAME·02</span><h4>Pitch Against the Machine</h4><p>A radar-tracked pitching duel against a pro on screen. Speed, accuracy, and bragging rights — with a leaderboard to keep the midway packed. Built for Speedway Classic.</p>
+      <div class="art vwrap"><video preload="none" data-poster="assets/poster/pitch.jpg" src="assets/video/pitch.mp4" playsinline width="320" height="568"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+      <div class="txt"><span class="kicker">GAME·02</span><h3>Pitch Against the Machine</h3><p>A radar-tracked pitching duel against a pro on screen. Speed, accuracy, and bragging rights — with a leaderboard to keep the midway packed. Built for Speedway Classic.</p>
       <a class="case" href="https://pivotxp.com/case-studies/chevy-baseball-pitch-interactive-activation-system" target="_blank" rel="noopener">Read the case study</a><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
     </div>
     <div class="card">
-      <div class="art vwrap"><video preload="none" poster="assets/poster/leaderboards.jpg" src="assets/video/leaderboards.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
-      <div class="txt"><span class="kicker">GAME·03</span><h4>Leaderboards</h4><p>Live standings on any screen on site, updated the moment a score lands. Run at LIV Golf, NFL Bootcamp, and for US Cellular.</p><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
+      <div class="art"><video autoplay muted loop playsinline preload="metadata" poster="assets/poster/leaderboards.jpg" src="assets/video/leaderboards.mp4" width="1280" height="720"></video></div>
+      <div class="txt"><span class="kicker">GAME·03</span><h3>Leaderboards</h3><p>Live standings on any screen on site, updated the moment a score lands. Run at LIV Golf, NFL Bootcamp, and for US Cellular.</p><span class="intouch"><em>works with</em><b>your registration platform</b></span></div>
     </div>
   </div>
 </section>
 
-<!-- ==================== 05 PLATFORM ==================== -->
-<section id="platform">
+<!-- ==================== 06 PLATFORM ==================== -->
+<section id="platform" class="band-dark">
   <div class="sec-head reveal">
-    <span class="num">05</span>
+    <span class="num">06</span>
     <h2>Platform &amp; Connectivity</h2>
     <p>The unglamorous layer that makes the glamorous parts reliable. One identity system underneath every touchpoint — so the data you promised the client actually shows up.</p>
   </div>
@@ -491,7 +942,7 @@ footer .fine a{color:var(--muted)}
     <div class="ib-copy">
       <img class="ib-logo" src="assets/img/wmevents-lockup.svg" alt="WM Events" width="299" height="69">
       <h3>One registration.<br>Every activation.</h3>
-      <p>Every product in this catalog ties into the registration platform already running your event — whatever your client has chosen. Guests are identified once, and everything Pivot builds recognises them from there: no retyping, no second sign-up. Their data stays in that system, so Pivot never adds a new data-handling surface to your client’s compliance review.</p>
+      <p>Run registration Pivot&rsquo;s way or your client&rsquo;s way. Our own API-driven registration interface can power the whole footprint — or every product in this catalog ties into the platform your client already runs. Either way, guests are identified once and everything Pivot builds recognises them from there: no retyping, no second sign-up. And after load-out, Pivot follows up on data compliance for your client — retention, deletion, and hand-off handled to their standards.</p>
     </div>
     <div class="ib-flow">
       <div class="step"><i>01</i><div><b>Register once</b><span>On the tablets already at your entrance — no parallel sign-up to run.</span></div></div>
@@ -502,30 +953,37 @@ footer .fine a{color:var(--muted)}
   </div>
 </section>
 
-<!-- ==================== 06 INSTALLS ==================== -->
-<section id="installs">
+<!-- ==================== 07 INSTALLS ==================== -->
+<section id="installs" class="band-light">
   <div class="sec-head reveal">
-    <span class="num">06</span>
+    <span class="num">07</span>
     <h2>In The Field</h2>
     <p>Beyond the booth line: full custom sets, broadcast desks, and branded builds — designed, fabricated, and run by Pivot crews.</p>
   </div>
-  <div class="media reveal field-grid">
-    <figure class="vwrap"><video preload="none" poster="assets/poster/install-liv.jpg" src="assets/video/install-liv.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></figure>
-    <figure><img src="assets/img/field-armynavy.jpg" alt="A hundred-foot live photo mosaic wall at a corporate centennial" loading="lazy" width="1600" height="900"></figure>
-    <figure><img src="assets/img/field-uscellular.jpg" alt="Oversized Oscar statues on the activation floor at the Academy Museum" loading="lazy" width="1600" height="1200"></figure>
-    <figure><img src="assets/img/field-ally.jpg" alt="Private clubhouse lounge under a tented pavilion at the Masters" loading="lazy" width="1299" height="1400"></figure>
-    <figure><img src="assets/img/field-trowe.jpg" alt="Robot camera rig on the red carpet at a film premiere" loading="lazy" width="1233" height="1600"></figure>
-    <figure class="vwrap"><video preload="none" poster="assets/poster/field-experience.jpg" src="assets/video/field-experience.mp4" playsinline></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></figure>
-    <figure><img src="assets/img/install-photo.jpg" alt="Check-in desks and screens inside a private clubhouse build" loading="lazy" width="1400" height="1050"></figure>
+  <div class="media reveal stagger field-grid">
+    <figure class="vwrap"><video preload="none" data-poster="assets/poster/install-liv.jpg" src="assets/video/install-liv.mp4" playsinline width="960" height="540"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></figure>
+    <figure><img src="assets/img/field-armynavy.webp" alt="Chevrolet football toss cage at the Army-Navy game with live scoreboard and leaderboard" loading="lazy" width="900" height="506"></figure>
+    <figure><img src="assets/img/field-uscellular.webp" alt="US Cellular giant boombox button wall at Summerfest" loading="lazy" width="900" height="675"></figure>
+    <figure><img src="assets/img/field-ally.jpg" alt="Ally ACC Women's Tournament basketball bucket wall with live leaderboard" loading="lazy" width="1299" height="1400"></figure>
+    <figure><img src="assets/img/field-trowe.jpg" alt="T. Rowe Price Curiosity Challenge trivia podium at the ACC Men's Tournament" loading="lazy" width="1233" height="1600"></figure>
+    <figure class="vwrap"><video preload="none" data-poster="assets/poster/field-experience.jpg" src="assets/video/field-experience.mp4" playsinline width="320" height="568"></video><span class="playbtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></figure>
+    <figure><img src="assets/img/install-photo.jpg" alt="Custom activation install" loading="lazy" width="1400" height="1050"></figure>
+    <figure><img src="assets/img/selfie-heydude.jpg" alt="Guests framed in a golf-hole overlay from a Hey Dude activation at the WM Phoenix Open" loading="lazy" width="1600" height="1600"><figcaption>Hey Dude · WM Phoenix Open</figcaption></figure>
   </div>
 </section>
 
-<!-- ==================== 07 PROOF OF WORK ==================== -->
-<section id="proof">
+<figure class="bleed reveal">
+  <img src="assets/img/bleed-uscellular.webp" width="1600" height="1200" loading="lazy" decoding="async"
+       alt="The US Cellular giant boombox button wall built by Pivot for Summerfest">
+  <figcaption>US Cellular · Summerfest — designed, fabricated and run by Pivot crews</figcaption>
+</figure>
+
+<!-- ==================== 08 PROOF OF WORK ==================== -->
+<section id="proof" class="band-dark">
   <div class="sec-head reveal">
-    <span class="num">07</span>
+    <span class="num">08</span>
     <h2>Proof of Work</h2>
-    <p>Don’t take the catalog’s word for it. This is a real client build — the Polaris “Tough Doesn’t Quit” touchscreen kiosk — recreated 1:1 as a webpage you can drive right now.</p>
+    <p>Don’t take the catalog’s word for it. Five real client builds are below. Three run live on this page — drive them in your browser — and two come straight from the field.</p>
   </div>
   <div class="proof-grid reveal">
     <div class="pg-copy">
@@ -541,8 +999,9 @@ footer .fine a{color:var(--muted)}
       <a class="pc-cta" href="polaris.html" target="_blank" rel="noopener">Open the full-page version →</a>
     </div>
     <div class="pg-unit">
-      <iframe src="polaris-embed.html" title="Polaris Tough Doesn't Quit — interactive kiosk demo" loading="lazy" scrolling="no"></iframe>
-      <p class="pg-cap">Interactive — this is the working unit, not a mock-up</p>
+      <span class="live-tag"><i></i>Live · drive it</span>
+      <iframe data-src="polaris-embed.html" title="Polaris Tough Doesn't Quit — interactive kiosk demo" loading="lazy" scrolling="no"></iframe><noscript><p class="demo-fallback">This demo runs in the browser — <a href="polaris.html">open the full-page version</a>.</p></noscript>
+      <p class="pg-cap">Swipe a row, tap a tile — stop, and the attract loop takes over</p>
     </div>
   </div>
 
@@ -560,8 +1019,9 @@ footer .fine a{color:var(--muted)}
       <a class="pc-cta" href="leaderboard-embed.html" target="_blank" rel="noopener">Open it full screen →</a>
     </div>
     <div class="pg-unit">
-      <iframe src="leaderboard-embed.html" title="Equinox Music Trivia — live leaderboard demo" loading="lazy" scrolling="no"></iframe>
-      <p class="pg-cap">Interactive — scores roll in as you watch</p>
+      <span class="live-tag"><i></i>Live · watch it</span>
+      <iframe data-src="leaderboard-embed.html" title="Equinox Music Trivia — live leaderboard demo" loading="lazy" scrolling="no"></iframe><noscript><p class="demo-fallback">This demo runs in the browser — <a href="leaderboard-embed.html">open it full screen</a>.</p></noscript>
+      <p class="pg-cap">Scores land on the board the moment they are set</p>
     </div>
   </div>
 
@@ -581,21 +1041,105 @@ footer .fine a{color:var(--muted)}
     </div>
     <div class="duo">
       <div class="duo-phone">
-        <div class="phone"><iframe src="strikeout/index.html" title="Striking Out Cancer — fan sign builder" loading="lazy"></iframe></div>
+        <span class="live-tag"><i></i>Live · try it</span>
+        <div class="phone"><iframe data-src="strikeout/index.html" title="Striking Out Cancer — fan sign builder" loading="lazy"></iframe></div><noscript><p class="demo-fallback">This demo runs in the browser — <a href="strikeout/index.html">open the sign builder</a>.</p></noscript>
         <p class="pg-cap">The fan’s phone — build &amp; post a sign</p>
       </div>
       <div class="duo-board">
-        <div class="board"><iframe src="strikeout/wall.html" title="Striking Out Cancer — stadium wall display" loading="lazy" scrolling="no"></iframe></div>
+        <span class="live-tag"><i></i>Live</span>
+        <div class="board"><iframe data-src="strikeout/wall.html" title="Striking Out Cancer — stadium wall display" loading="lazy" scrolling="no"></iframe></div><noscript><p class="demo-fallback">This demo runs in the browser — <a href="strikeout/wall.html">open the video board</a>.</p></noscript>
         <p class="pg-cap">The video board — your sign arrives with a “Just Added” tag</p>
       </div>
     </div>
   </div>
+
+  <div class="proof-grid flip reveal">
+    <div class="pg-copy">
+      <span class="kicker">Case study · Ally ACC Women’s Tournament</span>
+      <h3>One card.<br>Every activation.</h3>
+      <p>At the 2026 Ally ACC Women’s Basketball Tournament, guests registered once and walked away with a branded Ally card built like a credit card. Every station on the floor read it: the trophy photo op pulled their favorite team and branded the shot automatically, Pop-A-Shot put their name straight onto a live top-10 leaderboard, and the prize station already knew how much they’d played. Nobody typed their info twice — it followed them, from the first scan to the prize table.</p>
+      <div class="pg-stats">
+        <div class="s"><b>1×</b><span>Registration, whole footprint</span></div>
+        <div class="s"><b>793</b><span>Gameplay sessions</span></div>
+        <div class="s"><b>1,009</b><span>Photos + covers delivered</span></div>
+        <div class="s"><b>Tiered</b><span>Prizes from tracked play</span></div>
+      </div>
+    </div>
+    <div class="pg-unit">
+      <div class="media">
+        <figure class="sq"><img src="assets/img/ally-registration.jpg" alt="Guests registering at the Ally welcome desk and receiving their credit-card-style fan pass" loading="lazy" width="1050" height="1400"><figcaption>01 · Register once, get the card</figcaption></figure>
+        <figure class="sq"><img src="assets/img/ally-photo-op.jpg" alt="Guest posing with the ACC Women's trophy at the Ally branded photo experience" loading="lazy" width="1033" height="1400"><figcaption>02 · Tap to shoot · team logo applied</figcaption></figure>
+        <figure class="sq"><img src="assets/img/ally-basketball-game.jpg" alt="Fans playing the sensor-scored Pop-A-Shot game at the Ally activation" loading="lazy" width="1299" height="1400"><figcaption>03 · Tap to play · live leaderboard</figcaption></figure>
+        <figure class="sq"><img src="assets/img/ally-prize-redemption.jpg" alt="Guest redeeming a prize determined by their tracked participation" loading="lazy" width="1050" height="1400"><figcaption>04 · Prize matched to participation</figcaption></figure>
+      </div>
+      <p class="pg-cap">The card journey on the floor — register, shoot, play, redeem</p>
+    </div>
+  </div>
+
+  <div class="proof-grid reveal">
+    <div class="pg-copy">
+      <span class="kicker">Case study · UScellular “US Mode” · Summerfest</span>
+      <h3>A 15-foot boombox.<br>648,112 presses.</h3>
+      <p>At Summerfest, “US Mode” asked festivalgoers to do one thing: put the phone down — literally, into a slot on the podium. That started 45 seconds on a wall of 40 backlit buttons: blue for healthy digital habits, points up; red for distractions, points down, with a giant radio-dial screen scoring every press live. Pivot engineered the whole game to run on local hardware — Raspberry Pi driving the buttons and lighting — so it never waited on festival internet, and it reset in under ten seconds to keep the line moving all day. Scores turned into prizes on the spot.</p>
+      <div class="pg-stats">
+        <div class="s"><b>648,112</b><span>Buttons pressed</span></div>
+        <div class="s"><b>15 ft</b><span>Custom boombox build</span></div>
+        <div class="s"><b>&lt;10 sec</b><span>Reset between players</span></div>
+        <div class="s"><b>No app</b><span>Phone-free by design</span></div>
+      </div>
+    </div>
+    <div class="pg-unit">
+      <div class="media">
+        <figure class="sq"><img src="assets/img/usmode-2.jpg" alt="The 15-foot UScellular boombox build with PLAY NOW screen and phone drop podium" loading="lazy" width="1400" height="1050"><figcaption>Phones in the slot · game on</figcaption></figure>
+        <figure class="sq"><img src="assets/img/usmode-1.jpg" alt="Guests playing the backlit button wall as the score and timer run on the boombox display" loading="lazy" width="1400" height="1050"><figcaption>40 backlit buttons · 45 seconds</figcaption></figure>
+        <figure class="sq"><img src="assets/img/usmode-3.jpg" alt="A queue of festivalgoers waiting behind branded stanchions as players hit the wall" loading="lazy" width="1400" height="1050"><figcaption>The line never stalled</figcaption></figure>
+        <figure class="sq"><img src="assets/img/usmode-4.jpg" alt="The full US Mode footprint at Summerfest under shade sails with crowd all around" loading="lazy" width="1400" height="1050"><figcaption>The footprint at Summerfest</figcaption></figure>
+      </div>
+      <p class="pg-cap">Built for UScellular with rEvolution — run entirely on local hardware</p>
+    </div>
+  </div>
 </section>
 
-<!-- ==================== 08 CONTACT ==================== -->
-<section id="contact">
+<!-- ==================== 09 WHY PIVOT ==================== -->
+<section id="why" class="band-light">
   <div class="sec-head reveal">
-    <span class="num">08</span>
+    <span class="num">09</span>
+    <h2>Why Pivot</h2>
+    <p>Most of what goes wrong on an activation happens in the gaps between vendors. We removed the gaps.</p>
+  </div>
+  <div class="plat reveal stagger">
+    <div class="p">
+      <svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+      <h3>One vendor, no seams</h3>
+      <p>We build the hardware and write the software that runs on it. When something needs to change on site, the person who made it is standing there — nothing gets blamed on an integration.</p>
+    </div>
+    <div class="p">
+      <svg viewBox="0 0 24 24"><path d="M5 12.5a9 9 0 0114 0"/><path d="M8.5 16a5 5 0 017 0"/><circle cx="12" cy="19.5" r="1"/><path d="M2 9a13 13 0 0120 0"/></svg>
+      <h3>We bring the internet</h3>
+      <p>A Starlink rental fleet and redundant Wi-Fi with live failover, deployed by our crew. Parking lot, ski slope, fairground — the activation never waits on venue IT.</p>
+    </div>
+    <div class="p">
+      <svg viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>
+      <h3>Registration, either way</h3>
+      <p>Use Pivot&rsquo;s own registration interface, or we tie straight into the platform your client already runs. Guests are identified once and everything on the floor recognises them — and we follow up on data compliance for your client, so guest data is handled to their standards from capture through deletion.</p>
+    </div>
+    <div class="p">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0"/><path d="M16 5.5a3 3 0 010 5.5"/><path d="M18 14.5a6 6 0 013 5.5"/></svg>
+      <h3>Support that never clocks out</h3>
+      <p>Designed, fabricated, wrapped, and run by Pivot. Our techs are on site with the build — and when they&rsquo;re not, remote tech support has your back 24/7.</p>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band reveal band-dark">
+  <p>Pitching something this quarter?<span>Send us the brief and we'll come back with numbers, lead times, and a client-branded mock-up you can put in the deck.</span></p>
+  <a href="#contact">Start a quote →</a>
+</div>
+
+<!-- ==================== 10 CONTACT ==================== -->
+<section id="contact" class="band-light">
+  <div class="sec-head reveal">
+    <span class="num">10</span>
     <h2>Get a Quote</h2>
     <p>Custom wrap, client-branded comp, or a full activation plan — tell us what you’re pitching and we’ll come back with numbers and lead times.</p>
   </div>
@@ -615,7 +1159,7 @@ footer .fine a{color:var(--muted)}
 </section>
 
 <!-- ==================== ASSET KIT ==================== -->
-<div class="kit reveal" id="assets">
+<div class="kit reveal band-dark" id="assets">
   <div>
     <p class="eyebrow" style="margin-bottom:.8rem">For your pitch decks</p>
     <h2>Take these assets with you</h2>
@@ -627,111 +1171,288 @@ footer .fine a{color:var(--muted)}
     <a class="ghost" href="#contact">Request a custom comp</a>
   </div>
 </div>
+</main>
 
-<footer>
+<footer class="band-dark">
   <img src="assets/img/pivot-logo.png" alt="PivotXP" width="2101" height="607">
   <p class="fine">Built for activations that cannot fail&nbsp;·&nbsp;<a href="https://pivotxp.com" target="_blank" rel="noopener">pivotxp.com</a>&nbsp;·&nbsp;<a href="mailto:tommy@pivotxp.com">tommy@pivotxp.com</a></p>
 </footer>
 
-<div id="lightbox" role="dialog" aria-modal="true">
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged view">
   <button class="lb-close" aria-label="Close">✕</button>
   <div class="lb-media"></div>
   <p class="lb-cap"></p>
 </div>
 <script>
-// nav border on scroll
+const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)').matches;
+// Hero loop. The poster is preloaded and carries the opening frame, so the video
+// is fetched only once the page has settled — it must never compete with the LCP.
+// Skipped entirely for reduced-motion and for anyone on a metered or slow link,
+// where a 1.2 MB decorative loop is not a fair trade.
+(function(){
+  const v=document.getElementById('heroVid');
+  if(!v)return;
+  if(reduceMotion)return;                       // poster stays, which is the point
+  const c=navigator.connection;
+  if(c&&(c.saveData||/^(slow-)?2g$/.test(c.effectiveType||'')))return;
+  const start=()=>{
+    v.src='assets/video/hero-loop.mp4';
+    v.play().catch(()=>{});                     // a refused autoplay just leaves the poster
+  };
+  if(document.readyState==='complete')requestIdleCallback?requestIdleCallback(start,{timeout:2500}):setTimeout(start,900);
+  else addEventListener('load',()=>{requestIdleCallback?requestIdleCallback(start,{timeout:2500}):setTimeout(start,900)});
+  // stop decoding once it scrolls away
+  new IntersectionObserver(es=>es.forEach(e=>{
+    if(!v.src)return;
+    e.isIntersecting?v.play().catch(()=>{}):v.pause();
+  }),{threshold:.05}).observe(v);
+})();
+
+// stagger index for every child of a .stagger container, so the CSS delay is
+// positional rather than hand-written per grid
+document.querySelectorAll('.reveal.stagger').forEach(c=>{
+  [...c.children].forEach((el,i)=>el.style.setProperty('--i',i));
+});
+
+// nav state, scroll progress and the cover drift all read scroll position, so
+// they share one rAF-throttled pass rather than three listeners doing layout work
 const nav=document.getElementById('nav');
-addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40),{passive:true});
+const progress=document.getElementById('progress');
+const cover=document.querySelector('.cover');
+const cue=document.querySelector('.scroll-cue');
+let scrollQueued=false;
+function onScroll(){
+  scrollQueued=false;
+  const y=scrollY;
+  nav.classList.toggle('scrolled',y>40);
+  const max=document.documentElement.scrollHeight-innerHeight;
+  progress.style.setProperty('--p',max>0?Math.min(y/max,1):0);
+  if(!reduceMotion&&cover){
+    // the dot field drifts a little slower than the page, and the cue retires
+    const vh=innerHeight;
+    if(y<vh){
+      cover.style.setProperty('--drift',(y*0.18).toFixed(1)+'px');
+      if(cue)cue.style.opacity=String(Math.max(0,1-y/260));
+    }
+  }
+  updateSpy();
+}
+addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(onScroll)}},{passive:true});
+addEventListener('resize',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(onScroll)}},{passive:true});
+
+// stat values count up the first time the band is read
+function countUp(el){
+  const raw=el.textContent.trim();
+  const m=raw.match(/^(\d+)(\D*)$/);
+  if(!m||reduceMotion)return;
+  const target=+m[1],suffix=m[2],dur=900,t0=performance.now();
+  el.textContent='0'+suffix;
+  (function step(t){
+    const k=Math.min((t-t0)/dur,1);
+    // same decelerating feel as the CSS easing
+    el.textContent=Math.round(target*(1-Math.pow(1-k,3)))+suffix;
+    if(k<1)requestAnimationFrame(step);
+  })(t0);
+}
+const countIO=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  countIO.unobserve(e.target);
+  countUp(e.target);
+}),{threshold:.6});
+document.querySelectorAll('.cred-stats b').forEach(b=>countIO.observe(b));
 
 // contact form -> supabase edge function -> sendgrid
-// TODO: switch slug to wm-events-contact once that function is deployed
-//       (identical, but stamps the notification email with this client's name)
+// TODO: this still posts to the jack-morton-contact function, so WM Events leads
+//       arrive stamped 'Jack Morton', and the other client's name is visible to
+//       anyone who opens the network tab. Deploy wm-events-contact (identical, new
+//       stamp) and switch the slug below. Verified 2026-08-26: wm-events-contact
+//       returns 404, so do NOT flip the slug before it exists — that silently
+//       breaks every quote request.
+//
+// KNOWN BREAKAGE — the form cannot submit from anywhere but the original domain.
+// The function answers every preflight with a hardcoded
+//     access-control-allow-origin: https://pivotxp.github.io
+// regardless of who asked, so the browser blocks the POST from any other host and
+// the catch below fires. Server-side fix: echo the request Origin when it is on the
+// allowlist, e.g.
+//     const ALLOWED = ['https://pivotxp.github.io','https://kpscriptz.github.io']
+//     const origin  = req.headers.get('Origin')
+//     'Access-Control-Allow-Origin': ALLOWED.includes(origin) ? origin : ALLOWED[0]
+// on BOTH the OPTIONS response and the POST response. Until then the mailto
+// fallback below is what actually gets the lead to Tommy.
+const CONTACT_TO='tommy@pivotxp.com';
 const qf=document.getElementById('quoteForm');
 if(qf){
   const st=document.getElementById('cfStatus'),btn=qf.querySelector('.cf-submit');
+  // If the POST can't get through, hand the visitor a pre-filled mail draft rather
+  // than a dead end — a quote request is too expensive to drop on a network error.
+  const mailtoFor=d=>{
+    const body=[
+      `Name: ${d.name}`,
+      `Email: ${d.email}`,
+      d.phone?`Phone: ${d.phone}`:null,
+      '',
+      d.comments||'(no details given)'
+    ].filter(v=>v!==null).join('\n');
+    return 'mailto:'+CONTACT_TO
+      +'?subject='+encodeURIComponent('Quote request — '+d.name)
+      +'&body='+encodeURIComponent(body.slice(0,1500));
+  };
   qf.addEventListener('submit',async e=>{
     e.preventDefault();
     const d=Object.fromEntries(new FormData(qf).entries());
     if(!d.name.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)){st.textContent='Name and a valid email, please';st.className='cf-status err';return}
+    if(d.website){st.textContent='Sent — we’ll be in touch shortly';st.className='cf-status ok';qf.reset();return} // honeypot
+    delete d.website;
     btn.disabled=true;st.textContent='Sending…';st.className='cf-status';
     try{
       const r=await fetch('https://jlgvaejxydcteciqzgub.supabase.co/functions/v1/jack-morton-contact',{
         method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});
-      if(!r.ok)throw new Error();
+      if(!r.ok)throw new Error('HTTP '+r.status);
       st.textContent='Sent — we’ll be in touch shortly';st.className='cf-status ok';qf.reset();
-    }catch(_){st.textContent='Something hiccuped — email tommy@pivotxp.com instead';st.className='cf-status err'}
+    }catch(_){
+      st.className='cf-status err';
+      st.innerHTML='';
+      st.append('Couldn’t reach the server — ');
+      const a=document.createElement('a');
+      a.href=mailtoFor(d);
+      a.textContent='send it from your mail app instead →';
+      st.append(a);
+    }
     btn.disabled=false;
   });
 }
 
-// pause live demo iframes while off-screen
+// Pause live demo iframes while off-screen.
+// The first observer callback fires before an iframe has registered its own message
+// listener, so that opening 'pause' used to be dropped and all four demos kept
+// running (and playing video) off-screen for the life of the page. Remember the last
+// command per frame and replay it on load. Frames are same-origin, so address the
+// real origin rather than '*'.
+const frameCmd=new WeakMap();
+function tellFrame(f,cmd){
+  frameCmd.set(f,cmd);
+  try{f.contentWindow&&f.contentWindow.postMessage({cmd},location.origin)}catch(_){}
+}
 const frameIO=new IntersectionObserver(es=>es.forEach(e=>{
-  try{e.target.contentWindow.postMessage({cmd:e.isIntersecting?'resume':'pause'},'*')}catch(_){}
+  tellFrame(e.target,e.isIntersecting?'resume':'pause');
 }),{threshold:.05});
+
+// Hold the demo iframes back until they are actually approaching the viewport.
+// loading="lazy" was not deferring these: all four fetched their own CSS, scripts and
+// webfonts (~750 KB, two of them 90 KB TTFs) during first paint, and started running
+// timers and video, long before anyone scrolled as far as Proof of Work.
+const frameSrcIO=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const f=e.target;
+  frameSrcIO.unobserve(f);
+  f.src=f.dataset.src;
+  f.removeAttribute('data-src');
+}),{rootMargin:'500px 0px'});
+
+// Video posters were 2.5 MB of a 3.4 MB first paint. A <video poster> is fetched
+// eagerly no matter what preload or loading say, so all sixteen downloaded before
+// the reader had scrolled past the cover. Same treatment as the frames.
+const posterIO=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const v=e.target;
+  posterIO.unobserve(v);
+  v.poster=v.dataset.poster;
+  v.removeAttribute('data-poster');
+}),{rootMargin:'600px 0px'});
+document.querySelectorAll('video[data-poster]').forEach(v=>posterIO.observe(v));
+
 document.querySelectorAll('.pg-unit iframe,.duo iframe').forEach(f=>{
-  if(f.complete||true)f.addEventListener('load',()=>frameIO.observe(f));
+  f.addEventListener('load',()=>tellFrame(f,frameCmd.get(f)||'pause'));
   frameIO.observe(f);
+  if(f.dataset.src)frameSrcIO.observe(f);
 });
 
 // gallery lightbox: images and videos open enlarged in a frame
-const lb=document.getElementById('lightbox'),lbMedia=lb.querySelector('.lb-media'),lbCap=lb.querySelector('.lb-cap');
+const lb=document.getElementById('lightbox'),lbMedia=lb.querySelector('.lb-media'),
+      lbCap=lb.querySelector('.lb-cap'),lbCloseBtn=lb.querySelector('.lb-close');
 let lbPrevFocus=null;
-function lbOpen(node,cap){lbPrevFocus=document.activeElement;lbMedia.innerHTML='';lbMedia.appendChild(node);lbCap.textContent=cap||'';lb.classList.add('open');document.body.style.overflow='hidden';lb.querySelector('.lb-close')?.focus()}
-function lbClose(){const v=lbMedia.querySelector('video');if(v)v.pause();lbMedia.innerHTML='';lb.classList.remove('open');document.body.style.overflow='';lbPrevFocus?.focus?.()}
+function lbOpen(node,cap){
+  lbPrevFocus=document.activeElement;
+  lbMedia.innerHTML='';lbMedia.appendChild(node);
+  lbCap.textContent=cap||'';
+  lb.setAttribute('aria-label',cap?'Enlarged view: '+cap:'Enlarged view');
+  lb.classList.add('open');document.body.style.overflow='hidden';
+  lbCloseBtn.focus();
+}
+function lbClose(){
+  if(!lb.classList.contains('open'))return;   // guard: Escape elsewhere must not yank focus
+  const v=lbMedia.querySelector('video');if(v)v.pause();
+  lbMedia.innerHTML='';lb.classList.remove('open');document.body.style.overflow='';
+  lbPrevFocus?.focus?.();lbPrevFocus=null;
+}
 lb.addEventListener('click',e=>{if(e.target===lb||e.target.classList.contains('lb-close'))lbClose()});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')lbClose()});
-document.querySelectorAll('.media figure').forEach(f=>{
-  f.setAttribute('role','button');f.setAttribute('tabindex','0');
-  f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();f.click()}});
-  f.addEventListener('click',()=>{
-    const cap=f.querySelector('figcaption')?.textContent||'';
-    const vid=f.querySelector('video');
-    if(vid){
-      const v=document.createElement('video');
-      v.src=vid.getAttribute('src');v.poster=vid.getAttribute('poster')||'';
-      v.controls=true;v.playsInline=true;v.autoplay=true;
-      lbOpen(v,cap);
-    }else{
-      const img=f.querySelector('img');if(!img)return;
-      const big=document.createElement('img');big.src=img.src;big.alt=img.alt||'';
-      lbOpen(big,cap);
-    }
-  });
-});
-// card artwork opens full-size in the lightbox (gamification keeps in-place play)
-document.querySelectorAll('.cards .card .art').forEach(a=>{
-  if(a.closest('#gamification-cards'))return;
-  a.setAttribute('role','button');a.setAttribute('tabindex','0');
-  a.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();a.click()}});
-  a.addEventListener('click',()=>{
-    const cap=a.parentElement.querySelector('.txt h4')?.textContent||'';
-    const vid=a.querySelector('video');
-    if(vid){
-      const v=document.createElement('video');
-      v.src=vid.getAttribute('src');v.poster=vid.getAttribute('poster')||'';
-      v.controls=true;v.playsInline=true;v.autoplay=true;
-      lbOpen(v,cap);
-    }else{
-      const img=a.querySelector('img');if(!img)return;
-      const big=document.createElement('img');big.src=img.src;big.alt=img.alt||'';
-      lbOpen(big,cap);
-    }
-  });
-});
-// click-to-play video wraps (legacy, now unused for .media)
-document.querySelectorAll('#gamification-cards .art.vwrap').forEach(w=>{
-  const v=w.querySelector('video');if(!v)return;
-  w.addEventListener('click',()=>{
-    if(w.classList.contains('playing')){if(v.paused)v.play();else v.pause();return}
-    document.querySelectorAll('.vwrap.playing video').forEach(o=>{if(o!==v){o.pause();}});
-    w.classList.add('playing');v.controls=true;v.play();
-  });
-  v.addEventListener('ended',()=>{w.classList.remove('playing');v.controls=false;v.load();});
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape'){lbClose();return}
+  if(e.key==='Tab'){e.preventDefault();lbCloseBtn.focus()}   // keep focus inside the dialog
 });
 
-// scroll reveal
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// One zoom behaviour for every gallery figure and card thumbnail.
+// Gamification cards used to play inline in a fixed 16:9 box — but two of those clips
+// are shot portrait, so most of the frame was cropped away, and the wrapper's click
+// handler fought the video's own controls (hitting native pause instantly replayed it).
+function mediaFrom(el){
+  const vid=el.querySelector('video');
+  if(vid){
+    const v=document.createElement('video');
+    // poster may still be deferred on a card the reader opened immediately
+    v.src=vid.getAttribute('src');v.poster=vid.getAttribute('poster')||vid.dataset.poster||'';
+    v.controls=true;v.playsInline=true;v.autoplay=true;
+    return v;
+  }
+  const img=el.querySelector('img');if(!img)return null;
+  const big=document.createElement('img');big.src=img.currentSrc||img.src;big.alt=img.alt||'';
+  return big;
+}
+function makeZoomable(el,capFn){
+  const cap=capFn();
+  el.setAttribute('role','button');el.setAttribute('tabindex','0');
+  el.setAttribute('aria-label',cap?'View '+cap+' full size':'View full size');
+  el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
+  el.addEventListener('click',()=>{const n=mediaFrom(el);if(n)lbOpen(n,capFn())});
+}
+document.querySelectorAll('.media figure').forEach(f=>
+  makeZoomable(f,()=>f.querySelector('figcaption')?.textContent||''));
+document.querySelectorAll('.cards .card .art').forEach(a=>
+  makeZoomable(a,()=>a.parentElement.querySelector('.txt h3')?.textContent||''));
+
+// nav scrollspy — eight sections is enough that readers want to know where they are
+// var, not const: the shared scroll pass is registered before this line runs, and a
+// let/const here would throw from the temporal dead zone instead of hitting the guard
+var spy=[...document.querySelectorAll('.nav-links a[href^="#"]')]
+  .filter(a=>!a.classList.contains('btn-kit'))
+  .map(a=>({a,el:document.querySelector(a.getAttribute('href'))}))
+  .filter(o=>o.el);
+// driven by the shared scroll pass above, not its own listener
+function updateSpy(){
+  if(!spy)return;   // scroll can fire before this block has initialised
+  const line=(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'))||66)+48;
+  let active=null;
+  for(const o of spy){if(o.el.getBoundingClientRect().top<=line)active=o}
+  spy.forEach(o=>o.a.classList.toggle('active',o===active));
+}
+// re-run once the browser has applied any deep link and settled the layout
+addEventListener('hashchange',updateSpy);
+addEventListener('load',onScroll);
+onScroll();
+
+// scroll reveal — falls back to showing everything if the observer is unavailable
+const reveals=document.querySelectorAll('.reveal');
+if('IntersectionObserver'in window){
+  // rootMargin rather than a percentage threshold: a block taller than ~12 screens
+  // (a stacked product spread on a phone) can never reach 8% visibility, and would
+  // have stayed at opacity:0 for good.
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -12% 0px'});
+  reveals.forEach(el=>io.observe(el));
+}else{
+  reveals.forEach(el=>el.classList.add('in'));
+}
 
 </script>
 <script data-goatcounter="https://pivotxp.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>

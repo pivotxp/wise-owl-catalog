@@ -108,6 +108,7 @@
   // parent catalog pauses rotation when the board is scrolled off-screen
   var wallPaused = false;
   window.addEventListener('message', function (e) {
+    if (e.origin !== window.location.origin) return;   // only the hosting catalog drives us
     if (!e.data || !e.data.cmd) return;
     if (e.data.cmd === 'pause' && !wallPaused) { wallPaused = true; clearInterval(timer); }
     if (e.data.cmd === 'resume' && wallPaused) { wallPaused = false; timer = setInterval(showNext, ROTATE_MS); }
