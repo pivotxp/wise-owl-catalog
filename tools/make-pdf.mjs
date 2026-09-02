@@ -1,4 +1,4 @@
-// Render print.html to Pivot-x-WM-Events-Experience-Catalog.pdf (8.5x11, 9 pages).
+// Render print.html to Pivot-x-Wise-Owl-Experience-Catalog.pdf (8.5x11, 11 pages).
 //
 //   node tools/make-pdf.mjs
 //
@@ -12,11 +12,11 @@ import { join } from 'path';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const URL = process.env.PRINT_URL || 'http://localhost:4350/print.html';
-const OUT = 'Pivot-x-WM-Events-Experience-Catalog.pdf';
+const OUT = 'Pivot-x-Wise-Owl-Experience-Catalog.pdf';
 const PORT = 9322;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const profile = mkdtempSync(join(tmpdir(), 'wmpdf-'));
+const profile = mkdtempSync(join(tmpdir(), 'wopdf-'));
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars',
   `--remote-debugging-port=${PORT}`, '--window-size=1100,1400',

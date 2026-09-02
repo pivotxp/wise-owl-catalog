@@ -17,26 +17,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap">
 <style>
-@font-face{font-family:Gyst;src:url(../assets/fonts/Gyst-Bold.otf) format('opentype');font-weight:700}
-@font-face{font-family:Gyst;src:url(../assets/fonts/Gyst-Medium.otf) format('opentype');font-weight:500}
+@font-face{font-family:Montserrat;src:url(../assets/print/fonts/Montserrat-VariableFont_wght.ttf) format('truetype');font-weight:100 900}
 :root{
-  --bg:#0C2412; --ink:#FFFEF7; --muted:#AEC6B4; --dim:#8AA791;
-  --mint:#01A94F; --mint-lt:#5FDD9A;
-  --disp:"Gyst",Georgia,serif;
+  --bg:#0A1C26; --ink:#FBFDFE; --muted:#A7C2CF; --dim:#85A2B2;
+  --mint:#04A6E1; --mint-lt:#5FCBF2;
+  --disp:"Montserrat","Inter",system-ui,sans-serif;
   --body:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:1200px;height:630px;overflow:hidden}
 body{background:
-    radial-gradient(900px 460px at 88% -12%,rgba(1,169,79,.16),transparent 60%),
-    radial-gradient(700px 400px at -8% 112%,rgba(1,169,79,.08),transparent 60%),
+    radial-gradient(900px 460px at 88% -12%,rgba(4,166,225,.16),transparent 60%),
+    radial-gradient(700px 400px at -8% 112%,rgba(4,166,225,.08),transparent 60%),
     var(--bg);
   color:var(--ink);font-family:var(--body);position:relative;
   display:flex;flex-direction:column;justify-content:center;
   padding:0 78px;-webkit-font-smoothing:antialiased}
 /* same dot field as the site cover */
 body::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:radial-gradient(rgba(174,198,180,.11) 1px,transparent 1px);
+  background-image:radial-gradient(rgba(173,196,207,.11) 1px,transparent 1px);
   background-size:26px 26px;
   mask-image:radial-gradient(560px 420px at 84% 26%,#000 18%,transparent 74%);
   -webkit-mask-image:radial-gradient(560px 420px at 84% 26%,#000 18%,transparent 74%)}
@@ -65,15 +64,15 @@ h1 em{font-style:normal;color:var(--mint)}
 <div class="brand">
   <img src="../assets/img/pivot-logo.png" alt="PivotXP">
   <span class="x">×</span>
-  <img class="mark" src="../assets/img/wmevents-mark.svg" alt="">
+  <img class="mark" src="../assets/img/wiseowl-lockup-white.png" alt="">
 </div>
 
-<p class="eyebrow">PivotXP · Experiential Technology</p>
+<p class="eyebrow">PivotXP · Event Technology</p>
 <h1>The Experience <em>Catalog</em></h1>
-<p class="prep">Prepared for <b>WM&nbsp;Events</b> · August 2026</p>
+<p class="prep">Prepared for <b>Wise&nbsp;Owl&nbsp;Productions</b> · September 2026</p>
 
 <div class="foot">
-  <span>Capture · AI · Takeaways · Gamification</span>
+  <span>Gamification · Live Data · AI · Capture</span>
   <span class="demos">Three live demos inside →</span>
 </div>
 
