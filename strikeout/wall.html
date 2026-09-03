@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Strikeout Wall — Video Board Display | AbbVie × MLB (POC)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;600;700&amp;family=Caveat:wght@600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/wall.css" />
+  <!-- the POC tag is position:fixed and collides with the banner once the board is
+       scaled into the catalog's frame; the catalog already labels the unit -->
+  <script>if(window.self!==window.top)document.documentElement.classList.add('embedded')</script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%2304A4E4' stroke-width='10'/%3E%3C/svg%3E">
+</head>
+<body class="board-body">
+
+  <!-- Fixed 1920×1080 board canvas, scaled to fit the window -->
+  <div class="board-stage" id="stage">
+
+    <header class="b-top">
+      <div class="b-lockup">
+        <img class="b-soc" src="assets/soc-horizontal-white.svg" alt="AbbVie — Striking Out Cancer" />
+        <span class="pairing-copy b-pairing">Donations to <b>fight cancer</b> with every strikeout</span>
+      </div>
+      <div class="b-series">2026 Wild Card Series · The Strikeout Wall</div>
+    </header>
+
+    <main class="b-main" id="bMain">
+      <div class="b-sign-col">
+        <div class="k-sign b-featured" id="featSign">
+          <img class="sign-logo" src="assets/soc-primary-white.svg" alt="" />
+          <div class="sign-k">K</div>
+          <div class="sign-msg" id="signMsg"></div>
+          <div class="sign-name" id="signName"></div>
+          <img class="sign-lockup" src="assets/abbvie-mlb-white-tag.png" alt="" />
+          <div class="sign-donate">Donations to <b>fight cancer</b> with every strikeout</div>
+        </div>
+      </div>
+
+      <div class="b-detail">
+        <p class="b-eyebrow">Fan Dedication <span class="just-added" id="justAdded">Just Added</span></p>
+        <h1 class="b-msg" id="detailMsg"></h1>
+        <p class="b-name" id="detailName"></p>
+        <p class="b-team" id="detailTeam"></p>
+        <div class="b-donate">
+          <span class="b-donate-num">$97,000</span>
+          <span class="b-donate-copy">donated to help fight cancer this Postseason —<br />AbbVie is doubling donations for all strikeouts through the World Series</span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="b-banner">
+      <span class="b-banner-kicker">This Season</span>
+      <span class="b-banner-main">Strikeouts Mean <em>More</em></span>
+      <span class="b-banner-div"></span>
+      <span class="b-banner-sub">Donations to <b>fight cancer</b> with every strikeout<br />Scan your K sign to add your own</span>
+      <img class="b-banner-lockup" src="assets/abbvie-mlb-white-tag.png" alt="AbbVie — Official Pharmaceutical Partner of MLB" />
+    </footer>
+
+  </div>
+
+  <a class="poc-tag" href="index.html">POC · simulated 1920×1080 video board · make your sign →</a>
+
+  <script src="js/teams.js"></script>
+  <script src="js/moderation.js"></script>
+  <script src="js/wall.js"></script>
+</body>
+</html>

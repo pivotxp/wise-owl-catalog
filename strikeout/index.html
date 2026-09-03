@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Striking Out Cancer — Turn Ks into Ws | AbbVie × MLB (POC)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;600;700&amp;family=Caveat:wght@600&amp;display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%2304A4E4' stroke-width='10'/%3E%3C/svg%3E">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="brand-lockup" href="index.html">
+      <img class="soc-img" src="assets/soc-horizontal-white.svg" alt="AbbVie — Striking Out Cancer" />
+      <span class="pairing-copy">Donations to <b>fight cancer</b> with every strikeout</span>
+    </a>
+    <nav class="topbar-meta">
+      <span class="hide-sm">2026 Wild Card · Postseason</span>
+      <span class="live-dot" aria-hidden="true"></span>
+      <a class="wall-link" href="wall.html">Live Wall</a>
+    </nav>
+  </header>
+
+  <div class="steps" id="stepDots" aria-hidden="true">
+    <span class="dot" data-step="0"></span>
+    <span class="dot" data-step="1"></span>
+    <span class="dot" data-step="2"></span>
+    <span class="dot" data-step="3"></span>
+    <span class="dot" data-step="4"></span>
+  </div>
+
+  <main>
+
+    <!-- STEP 1 · Welcome animation -->
+    <section class="screen" id="screen-splash" data-step="0">
+      <img class="splash-logo" src="assets/soc-primary-white.svg" alt="AbbVie — Striking Out Cancer" />
+      <h1 class="splash-title">Turn <span class="accent">Ks</span> into <span class="accent">Ws</span></h1>
+      <p class="splash-sub">Donations to fight cancer with every strikeout</p>
+      <div class="splash-cta">
+        <button class="btn" id="btnBegin">Add Your K to the Wall</button>
+      </div>
+    </section>
+
+    <!-- STEP 2 · Pick your favorite team -->
+    <section class="screen" id="screen-team" data-step="1">
+      <p class="eyebrow">Step 1 of 4</p>
+      <h2>Pick Your Team</h2>
+      <p class="lede">Choose your club and we'll load a strikeout sign in your team's colors.</p>
+      <div class="team-filters" id="teamFilters">
+        <button class="chip active" data-filter="ALL">All Clubs</button>
+        <button class="chip" data-filter="AL">American League</button>
+        <button class="chip" data-filter="NL">National League</button>
+      </div>
+      <div class="team-grid" id="teamGrid"></div>
+    </section>
+
+    <!-- STEP 3 · Personalize -->
+    <section class="screen" id="screen-personalize" data-step="2">
+      <p class="eyebrow">Step 2 of 4</p>
+      <h2>Personalize Your Sign</h2>
+      <p class="lede">Who are you striking out cancer for?</p>
+
+      <div class="personalize-grid">
+        <div class="preview-col">
+          <div class="preview-stage">
+            <div class="k-sign" id="signPreview">
+              <img class="sign-logo" src="assets/soc-primary-white.svg" alt="" />
+              <div class="sign-k" id="pvK">K</div>
+              <div class="sign-msg" id="pvMsg"></div>
+              <div class="sign-name" id="pvName"></div>
+              <img class="sign-lockup" src="assets/abbvie-mlb-white-tag.png" alt="AbbVie — Official Pharmaceutical Partner of MLB" />
+              <div class="sign-donate">Donations to <b>fight cancer</b> with every strikeout</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-col">
+          <div class="field">
+            <label for="msgSelect">Your dedication</label>
+            <select id="msgSelect"></select>
+            <p class="hint">Messages are pre-approved. Final list subject to AbbVie medical/legal/regulatory review.</p>
+          </div>
+
+          <div class="field">
+            <label for="nameInput">Add a first name <span style="opacity:.55">(optional)</span></label>
+            <input type="text" id="nameInput" maxlength="18" placeholder="e.g. Grandpa Bob" autocomplete="off" />
+            <p class="hint" id="nameHint">Rendered on-sign only — nothing is stored server-side (NO DATA COLLECTED). Names are screened automatically; production adds a full moderation service before stadium display.</p>
+          </div>
+
+          <div class="field">
+            <label>Sign style</label>
+            <div class="style-row" id="styleRow">
+              <button class="style-option selected" data-style="home" title="Home">K<span>HOME</span></button>
+              <button class="style-option pin" data-style="classic" title="Classic pinstripe">K<span>CLASSIC</span></button>
+              <button class="style-option" data-style="postseason" style="--tp:#0c2340; --ts:#ffc52f;" title="Postseason">K<span>POSTSEASON</span></button>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn ghost small" id="btnBackTeam">← Change Team</button>
+            <button class="btn" id="btnAddToWall">Add to the Wall Now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4 · Post your sign -->
+    <section class="screen" id="screen-post" data-step="3">
+      <p class="eyebrow">Step 3 of 4</p>
+      <h2>Your K Is Going Up</h2>
+      <div class="post-stage">
+        <div class="board-title">◤ Strikeout Wall · Live Feed ◢</div>
+        <div class="mini-wall" id="miniWall"></div>
+        <p class="post-status" id="postStatus">Sending your sign to the wall…</p>
+      </div>
+    </section>
+
+    <!-- STEP 5 · Thank you / STEP 6 · Download & share -->
+    <section class="screen" id="screen-thanks" data-step="4">
+      <p class="eyebrow">Step 4 of 4</p>
+      <div class="thanks-panel">
+        <p class="big">Every strikeout<br /><span class="accent">means more</span></p>
+        <p class="thanks-copy">
+          Thank you for adding your K. From AbbVie and Major League Baseball —
+          every strikeout this Postseason drives donations to help fight cancer,
+          and your sign just made the wall a little louder.
+        </p>
+        <div class="form-actions" style="justify-content:center;">
+          <button class="btn" id="btnDownload">Download Your Sign</button>
+          <a class="btn ghost" href="wall.html" id="btnSeeWall">See the Live Wall</a>
+        </div>
+        <div class="share-row" aria-hidden="true">
+          <span class="share-pill">f</span>
+          <span class="share-pill">ig</span>
+          <span class="share-pill">x</span>
+          <span class="share-pill">in</span>
+        </div>
+        <p class="share-note">Social sharing + #StrikingOutCancer tracking — Phase 2</p>
+        <p style="margin-top:22px;">
+          <button class="btn ghost small" id="btnRestart">Make Another Sign</button>
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="poc-footer">
+    <strong>Concept build · AbbVie × MLB.</strong><br />
+    Club marks and Striking Out Cancer lockups used under agency supply for concept development;
+    final usage clears MLB brand QA and AbbVie MLR. Production scope is defined: brand motion pass,
+    server-side moderation, CDN architecture for in-stadium QR spikes, analytics,
+    WCAG 2.2 AA, and MLR review cycles.
+  </footer>
+
+  <canvas id="renderCanvas" width="1080" height="1350" style="display:none;"></canvas>
+
+  <script src="js/teams.js"></script>
+  <script src="js/moderation.js"></script>
+  <script src="js/app.js"></script>
+<script>
+  /* When framed in the catalog, the wall opens in its own tab and the
+     concept-build footer stays out of the phone viewport */
+  if (window.self !== window.top) {
+    document.querySelectorAll('a[href="wall.html"]').forEach(function (a) {
+      a.target = '_blank'; a.rel = 'noopener';
+    });
+    var pf = document.querySelector('.poc-footer');
+    if (pf) pf.style.display = 'none';
+  }
+</script>
+</body>
+</html>
