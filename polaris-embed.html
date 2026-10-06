@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris Kiosk — Embed</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&amp;display=swap"><style>@font-face{font-family:"Montserrat";font-style:normal;font-weight:300;src:url(assets/fonts/Montserrat-300-500-700-1.woff2) format('woff2');font-display:block}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:500;src:url(assets/fonts/Montserrat-300-500-700-1.woff2) format('woff2');font-display:block}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:700;src:url(assets/fonts/Montserrat-300-500-700-1.woff2) format('woff2');font-display:block}
+</style>
+<style>
+:root{
+  --bg:#12181C; --surface:#1D2428; --raise:#2B3338; --line:rgb(var(--mint-rgb)/.20);
+  --ink:#FAFCFD; --muted:#B2C0C9; --dim:#8D9EA9;
+  --mint:#04A4E4; --mint-deep:#0071A0; --mint-ink:#001D2D; --mint-lt:#5EC3FB; --mint-hi:#2CB4F5;
+  --mint-rgb:4 164 228; --ground-deep-rgb:4 7 9; --ground-ink-rgb:22 29 33;
+  --scrim-light-rgb:248 251 252; --dim-rgb:141 158 169; --ink-light-rgb:16 34 44;
+  --accent:#04A4E4; --err:#FF7A7A;
+  --shadow-art:drop-shadow(0 30px 40px rgba(0,0,0,.5));
+  --disp:"Montserrat","Inter",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; --mono:"Inter",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+.band-light{
+  --bg:#F3F6F8; --surface:#FFFFFF; --raise:#E7ECEF;
+  --line:rgb(var(--ground-ink-rgb)/.13);
+  --ink:#10222C; --muted:#4B575F; --dim:#59656D;
+  --accent:#0071A0; --err:#A3231B; --mint-lt:#0071A0;
+  --shadow-art:drop-shadow(0 24px 34px rgb(var(--ground-ink-rgb)/.20));
+  background:var(--bg);color:var(--ink)
+}
+.band-dark{
+  --bg:#12181C; --surface:#1D2428; --raise:#2B3338;
+  --line:rgb(var(--mint-rgb)/.20);
+  --ink:#FAFCFD; --muted:#B2C0C9; --dim:#8D9EA9;
+  --accent:#04A4E4; --mint-lt:#5EC3FB; --err:#FF7A7A;
+  --shadow-art:drop-shadow(0 30px 40px rgba(0,0,0,.5));
+  background:var(--bg);color:var(--ink)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* ---------- page chrome (lookbook language) ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:1.1rem clamp(1.2rem,6vw,5rem);border-bottom:1px solid var(--line)}
+.top img{height:22px;width:auto;display:block}
+.top a.back{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.top a.back:hover{color:var(--mint)}
+.wrap{display:grid;gap:clamp(2rem,5vw,4.5rem);grid-template-columns:minmax(300px,420px) 1fr;align-items:start;
+  padding:clamp(2rem,5vw,4rem) clamp(1.2rem,6vw,5rem);max-width:1300px;margin:0 auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.story{order:2}}
+.eyebrow{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mint-lt)}
+.story h1{font-family:var(--disp);font-weight:700;font-size:clamp(1.9rem,3.4vw,2.7rem);line-height:1.06;text-transform:uppercase;margin:1rem 0 1.2rem;text-wrap:balance}
+.story p{color:var(--muted);margin-bottom:1rem;max-width:46ch}
+.story b{color:var(--ink);font-weight:600}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:1.8rem 0}
+.stats .s{border:1px solid var(--line);border-radius:6px;padding:.9rem 1rem;background:linear-gradient(180deg,var(--surface),transparent)}
+.stats .s b{display:block;font-family:var(--disp);font-weight:700;font-size:1.15rem;color:var(--mint);margin-bottom:.1rem}
+.stats .s span{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.hint{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);border-left:2px solid var(--mint-deep);padding-left:.8rem;line-height:1.9}
+
+/* ---------- touchscreen TV unit ---------- */
+.stage{display:flex;flex-direction:column;align-items:center;gap:0}
+.tv{position:relative;padding:clamp(10px,1.6vw,16px);border-radius:14px;
+  background:linear-gradient(150deg,#23282c 0%,#101315 55%,#181c1f 100%);
+  border:1px solid #383f44;border-bottom-color:#22272a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 24px 70px rgba(0,0,0,.6)}
+.tv::after{content:"";position:absolute;left:50%;bottom:5px;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--mint);opacity:.8;box-shadow:0 0 6px var(--mint)}
+.frame{position:relative;width:min(400px,84vw);aspect-ratio:9/16;background:#000;border-radius:4px;overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.9)}
+.frame::after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:4px;
+  background:linear-gradient(112deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.02) 26%,transparent 40%)}
+.stand{display:flex;flex-direction:column;align-items:center;width:min(400px,84vw)}
+.stand .neck{width:14%;height:clamp(34px,5vw,54px);
+  background:linear-gradient(90deg,#0d1012,#272c30 45%,#33393e 50%,#272c30 55%,#0d1012);
+  clip-path:polygon(18% 0,82% 0,100% 100%,0 100%)}
+.stand .base{width:52%;height:clamp(10px,1.4vw,14px);border-radius:4px 4px 8px 8px;
+  background:linear-gradient(180deg,#2c3236,#0e1113);border:1px solid #383f44;border-top:none}
+.stand .floor{width:78%;height:16px;margin-top:6px;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.55),transparent 70%)}
+.frame-cap{margin-top:.6rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);text-align:center}
+
+/* ---------- kiosk (faithful recreation) ---------- */
+.kiosk{position:absolute;inset:0;background:#000;color:#fff;display:flex;flex-direction:column;
+  font-family:var(--disp);user-select:none;-webkit-user-select:none;touch-action:pan-y;overflow:hidden;padding-bottom:2%}
+.kiosk .pad{padding:0 5.5%}
+.k-head{margin-top:7%}
+.k-head h2{font-weight:700;text-transform:uppercase;font-size:clamp(1.6rem,9.2cqw,2.6rem);line-height:.98;letter-spacing:.01em}
+.k-head .sub{margin-top:4.5%;font-family:var(--body);font-weight:500;font-size:clamp(.72rem,3.4cqw,.95rem);line-height:1.5;color:#fff}
+.k-head .sub + .sub{margin-top:3%}
+.frame{container-type:inline-size}
+.k-row{margin-top:auto}
+.k-row .k-label{display:flex;align-items:center;gap:4%;padding:0 5.5%}
+.k-row .k-label h3{font-weight:700;text-transform:uppercase;font-size:clamp(.95rem,5cqw,1.4rem);white-space:nowrap}
+.k-row .k-label .rule{flex:1;height:1px;background:#fff}
+.k-car{position:relative;margin-top:3.5%}
+.k-strip{display:flex;gap:3.5cqw;overflow-x:auto;scroll-snap-type:x mandatory;padding:2% 5.5%;scrollbar-width:none;cursor:grab}
+.k-strip::-webkit-scrollbar{display:none}
+.k-strip.dragging{cursor:grabbing;scroll-snap-type:none}
+.k-tile{flex:0 0 38cqw;scroll-snap-align:start}
+.k-tile .ph{width:100%;aspect-ratio:400/470;object-fit:contain;display:block;pointer-events:none}
+.k-arrow{position:absolute;top:38%;transform:translateY(-50%);width:9cqw;height:9cqw;border:none;border-radius:50%;
+  background:rgba(255,255,255,.14);backdrop-filter:blur(4px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .2s,opacity .3s}
+.k-arrow:hover{background:rgba(255,255,255,.3)}
+.k-arrow svg{width:45%;height:45%;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.k-arrow.prev{left:1.5%}.k-arrow.next{right:1.5%}
+.k-arrow[disabled]{opacity:0;pointer-events:none}
+
+/* ---------- player ---------- */
+.k-player{position:absolute;inset:0;background:#000;display:none;z-index:5}
+.k-player.open{display:block}
+.k-player video{width:100%;height:100%;object-fit:cover;display:block}
+.k-btn{position:absolute;font-family:var(--disp);font-weight:700;text-transform:uppercase;
+  font-size:clamp(.6rem,3.1cqw,.85rem);letter-spacing:.04em;color:#fff;background:#1B66C9;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:.5em;padding:.7em 1.1em;border-radius:3px;z-index:6}
+.k-btn svg{width:.9em;height:.9em;fill:#fff}
+.k-btn.back{left:11.6%;bottom:20.9%;width:29.9%;height:4.4%;justify-content:center;padding:0;font-size:clamp(.5rem,2.55cqw,.72rem)}
+.k-btn.replay{right:11.6%;bottom:20.9%;height:4.4%;padding:0 1.2em;background:rgba(255,255,255,.16)}
+.k-note{position:absolute;left:5.5%;bottom:2.5%;font-family:var(--body);font-size:clamp(.42rem,1.8cqw,.55rem);color:#777;z-index:6}
+
+/* ---------- attract ---------- */
+.k-attract{position:absolute;inset:0;background:#000;display:none;z-index:8;cursor:pointer}
+.k-attract.open{display:block}
+.k-attract video{width:100%;height:100%;object-fit:cover}
+.k-attract .cta{position:absolute;left:0;right:0;bottom:9%;text-align:center;font-family:var(--disp);font-weight:700;
+  text-transform:uppercase;font-size:clamp(.8rem,4cqw,1.1rem);letter-spacing:.14em;color:#fff;animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+
+footer{padding:2.5rem clamp(1.2rem,6vw,5rem);border-top:1px solid var(--line);margin-top:2rem}
+footer .fine{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+footer .fine a{color:var(--muted)}
+
+/* embed overrides */
+/* NOT transparent: an iframe paints its own white canvas under a transparent document,
+   so this rendered as a bright white slab inside the dark catalog page. Match the
+   catalog background instead. */
+body{background:var(--bg);display:flex;justify-content:center;padding:6px 0 0}
+.frame{width:min(400px,88vw)}
+.stand{width:min(400px,88vw)}
+.stage{gap:0}
+</style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='42' fill='none' stroke='%2304A4E4' stroke-width='10'/%3E%3C/svg%3E">
+</head>
+<body>
+<div class="stage">
+<div class="tv">
+    <div class="frame">
+      <div class="kiosk" id="kiosk">
+        <div class="k-head pad">
+          <h2>Tough Doesn’t Quit</h2>
+          <p class="sub">See how Polaris machines and riders push to the limit and then some.</p>
+          <p class="sub">Swipe for more videos.<br>Tap to select and play.</p>
+        </div>
+        <div class="k-row">
+          <div class="k-label"><h3>Testing in Action</h3><div class="rule"></div></div>
+          <div class="k-car">
+            <button class="k-arrow prev" aria-label="Scroll back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="k-strip" id="strip1"></div>
+            <button class="k-arrow next" aria-label="Scroll forward"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <div class="k-row">
+          <div class="k-label"><h3>Rider Stories</h3><div class="rule"></div></div>
+          <div class="k-car">
+            <button class="k-arrow prev" aria-label="Scroll back"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <div class="k-strip" id="strip2"></div>
+            <button class="k-arrow next" aria-label="Scroll forward"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+
+        <div class="k-player" id="player">
+          <video id="pvideo" playsinline preload="auto"></video>
+          <button class="k-btn back" id="btnBack"><svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6z"/></svg>Back to videos</button>
+          <button class="k-btn replay" id="btnReplay"><svg viewBox="0 0 24 24"><path d="M12 5V1L7 6l5 5V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"/></svg>Replay</button>
+          <span class="k-note" id="pnote"></span>
+        </div>
+
+        <div class="k-attract" id="attract">
+          <video src="assets/polaris/video/attract.mp4" muted loop playsinline preload="none"></video>
+          <div class="cta">Tap to explore</div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="stand"><div class="neck"></div><div class="base"></div><div class="floor"></div></div>
+</div>
+<script>
+const C1=[
+ ["Chassis_Dyno_Test","Chassis Dyno Test"],["Drop_Test","Drop Test"],["Incline_Test","Incline Test"],
+ ["Mud_Test","Mud Test"],["Off_Camber_Test","Off Camber Test"],["Oval_Track_Test","Oval Track Test"],
+ ["Payload_Test","Payload Test"],["Rock_Crawl_Test","Rock Crawl Test"],["Sound_Chamber_Test","Sound Chamber Test"],
+ ["VDS_Machine","VDS Machine"]];
+const C2=[
+ ["BrockHeger","Brock_Heger","Brock Heger"],["Dakar1","Dakar1","Dakar · Part 1"],["Dakar2","Dakar2","Dakar · Part 2"],
+ ["Dakar3","Dakar3","Dakar · Part 3"],["Dakar4","Dakar4","Dakar · Part 4"],["Jeremy_Twitch","Jeremy_Twitch","Jeremy “Twitch” Stenberg"],
+ ["TavoVil","TavoVil","Tavo Vildósola"],["VickiGolden","VickiGolden","Vicki Golden"],["WrightFamily","WrightFamily","Wright Family"]];
+
+const T="assets/polaris/tiles/",V="assets/polaris/video/";
+function tile(img,vid,label,excerpt){
+  const f=document.createElement('figure');f.className='k-tile';f.setAttribute('role','button');f.setAttribute('tabindex','0');f.setAttribute('aria-label',label);
+  f.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPlayer(vid,label,excerpt)}});
+  f.innerHTML=`<img class="ph" src="${T}${img}.png" alt="${label}" loading="lazy" draggable="false">`;
+  f.addEventListener('click',()=>{if(!dragMoved)openPlayer(vid,label,excerpt)});
+  return f;
+}
+C1.forEach(([n,l])=>strip1.appendChild(tile(n,`c1_${n}`,l,false)));
+C2.forEach(([img,vid,l])=>strip2.appendChild(tile(img,`c2_${vid}`,l,true)));
+
+/* drag-to-scroll (mouse) + arrows, magnetic snap via CSS */
+let dragMoved=false;
+document.querySelectorAll('.k-strip').forEach(strip=>{
+  let down=false,sx=0,sl=0,moved=0;
+  strip.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse')return;down=true;moved=0;sx=e.clientX;sl=strip.scrollLeft;strip.classList.add('dragging')});
+  window.addEventListener('pointermove',e=>{if(!down)return;const dx=e.clientX-sx;moved=Math.max(moved,Math.abs(dx));strip.scrollLeft=sl-dx});
+  window.addEventListener('pointerup',()=>{if(!down)return;down=false;dragMoved=moved>6;strip.classList.remove('dragging');setTimeout(()=>dragMoved=false,50)});
+  const car=strip.parentElement,prev=car.querySelector('.prev'),next=car.querySelector('.next');
+  const step=()=>strip.querySelector('.k-tile').getBoundingClientRect().width*2;
+  prev.addEventListener('click',()=>strip.scrollBy({left:-step(),behavior:'smooth'}));
+  next.addEventListener('click',()=>strip.scrollBy({left:step(),behavior:'smooth'}));
+  const upd=()=>{prev.disabled=strip.scrollLeft<10;next.disabled=strip.scrollLeft>strip.scrollWidth-strip.clientWidth-10};
+  strip.addEventListener('scroll',upd,{passive:true});upd();
+});
+
+/* player */
+const player=document.getElementById('player'),pv=document.getElementById('pvideo'),pnote=document.getElementById('pnote');
+function openPlayer(vid,label,excerpt){
+  pv.src=`${V}${vid}.mp4`;pnote.textContent=excerpt?'Excerpt — trimmed for web demo':'';
+  player.classList.add('open');pv.play().catch(()=>{});
+}
+function closePlayer(){player.classList.remove('open');pv.pause();pv.removeAttribute('src');pv.load()}
+btnBack.addEventListener('click',closePlayer);
+btnReplay.addEventListener('click',()=>{pv.currentTime=0;pv.play()});
+pv.addEventListener('ended',()=>setTimeout(()=>{if(player.classList.contains('open')&&pv.ended)closePlayer()},6000));
+
+/* attract loop */
+const attract=document.getElementById('attract'),av=attract.querySelector('video');
+let idleT;
+function armIdle(){clearTimeout(idleT);idleT=setTimeout(()=>{
+  if(player.classList.contains('open')&&!pv.paused)return armIdle();
+  closePlayer();attract.classList.add('open');av.play().catch(()=>{});
+},60000)}
+function wake(){if(attract.classList.contains('open')){attract.classList.remove('open');av.pause()}armIdle()}
+['pointerdown','pointermove','touchstart','keydown'].forEach(ev=>document.getElementById('kiosk').addEventListener(ev,wake,{passive:true}));
+armIdle();
+
+/* parent catalog pauses us when scrolled off-screen */
+let parked=false;
+addEventListener('message',e=>{
+  if(e.origin!==location.origin)return;   // only the hosting catalog drives us
+  if(!e.data||!e.data.cmd)return;
+  if(e.data.cmd==='pause'){parked=true;clearTimeout(idleT);pv.pause();av.pause();}
+  if(e.data.cmd==='resume'&&parked){parked=false;if(attract.classList.contains('open'))av.play().catch(()=>{});armIdle();}
+});
+</script>
+</body>
+</html>
